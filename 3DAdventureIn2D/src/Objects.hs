@@ -7,12 +7,13 @@ module Objects(
     ,cube
     ,fullCube
     ,gLine
+    ,gRect
+    ,gFullRect
     ,boss
-    ,trd
     ,cylinder
     ,henge
     --,lineDistance
-    ,rectPath
+    --,fullCubePath
     ,
     ) where
 
@@ -20,10 +21,54 @@ import Graphics.Proc
 import Drawable
 import Geometry
 import Actor
+import ObjectUtils
+
+-- 2D Objects
+
+gLine :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
+gLine (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLine strkW col) (gLinePath strkW)
+
+gRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
+gRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawRect col strkW) (rectPath strkW)
+
+gFullRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
+gFullRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawFullRect col) fullRectPath
+
+
+-- 3D Objects
+
+sphere :: P3 -> Diameter -> Col -> Geometry
+sphere transition width col = Geo (T transition (0,0,0) (width, width, width)) (drawEllipsoide col) ellipsoidePath
+
+cube :: Transform -> StrokeWeight -> Col -> Geometry
+cube t strkW col = Geo t (drawCube col strkW) (cubePath strkW)
+
+fullCube :: Transform -> Col -> Geometry
+fullCube t col = Geo t (drawFullCube col) fullCubePath 
+
+cylinder :: Transform -> Col -> StrokeWeight -> Geometry
+cylinder t col sw = Geo t (drawCylinder col col sw) cylinderPath
+
+ellipsoide :: Transform -> Col -> Geometry
+ellipsoide t col = Geo t (drawEllipsoide col) ellipsoidePath
+
+henge :: Transform -> Geometry
+henge t = Geo t drawHenge hengePath
+
+boss :: Transform -> Actor
+boss t = A (Geo t drawBoss fullCubePath) bossTick  --TODO maybe fullCubePath is not suited that well
 
 
 
-drawCube col strkW t (_,_,z) | outOfRange t z = return ()
+-- Draw functions
+drawRect :: Col -> StrokeWeight -> Transform -> P3 -> Draw
+drawRect = drawRectInRange outOf2DRange
+
+drawCube :: Col -> StrokeWeight -> Transform -> P3 -> Draw
+drawCube = drawRectInRange outOf3DRange
+
+drawRectInRange :: (Transform -> Z -> Bool) -> Col -> StrokeWeight -> Transform -> P3 -> Draw
+drawRectInRange rangeFunction col strkW t (_,_,z)  | rangeFunction t z = return ()
       | otherwise = do 
         stroke col
         strokeWeight strkW
@@ -36,20 +81,15 @@ drawCube col strkW t (_,_,z) | outOfRange t z = return ()
             rightLower = (cx + sx/2, cy + sy/2)
             rightUpper = (cx + sx/2, cy - sy/2)
 
-cubePath sw t z | outOfRange t z = []
-      | otherwise = linePathing sw leftLower leftUpper ++ 
-                    linePathing sw leftUpper rightUpper ++
-                    linePathing sw rightUpper rightLower ++
-                    linePathing sw rightLower leftLower 
-        where
-            (sx,sy,sz) = scaling t
-            (cx,cy) = centerOf $ transition t
-            leftLower = (cx - sx/2, cy + sy/2)
-            leftUpper = (cx - sx/2, cy - sy/2)
-            rightLower = (cx + sx/2, cy + sy/2)
-            rightUpper = (cx + sx/2, cy - sy/2)
 
-drawFullCube col t (_,_,z) | outOfRange t z = return ()
+drawFullRect :: Col -> Transform -> P3 -> Draw
+drawFullRect = drawFullRectInRange outOf2DRange
+
+drawFullCube :: Col -> Transform -> P3 -> Draw
+drawFullCube = drawFullRectInRange outOf3DRange
+
+drawFullRectInRange :: (Transform -> Z -> Bool) -> Col -> Transform -> P3 -> Draw
+drawFullRectInRange rangeFunction col t (_,_,z) | rangeFunction t z = return ()
       | otherwise = do
         strokeFill col
         strokeWeight 1
@@ -62,13 +102,9 @@ drawFullCube col t (_,_,z) | outOfRange t z = return ()
             rightUpper = (cx + sx/2, cy - sy/2)
 
 
-outOfRange :: Transform -> Float -> Bool
-outOfRange (T (_,_,tz) _ (_,_,sz)) z = z < tz - sz/2 || z > tz + sz/2 
 
-lineOutOfRange :: Transform -> Float -> Bool
-lineOutOfRange (T (_,_,tz) _ _) z = tz /= z 
-
-drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) (_,_,z) | lineOutOfRange t z = return ()
+drawLine :: StrokeWeight -> Col -> Transform -> P3 -> Draw
+drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) (_,_,z) | outOf2DRange t z = return ()
       | otherwise = do
         strokeWeight sw
         stroke col
@@ -77,98 +113,19 @@ drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) (_,_,z) | lineOutOfRange t z = retur
             begin = (tx,ty)
             end = (sx,sy)
     
-gLinePath sw t z | lineOutOfRange t z = []
-      | otherwise = linePathing sw beg end
-        where            
-            (bx,by,_) = transition t
-            beg = (bx,by)
-            (ex,ey,_) = scaling t
-            end = (ex,ey)
-
-linePathing sw beg@(bx,by) end@(ex,ey) = [p | p <- rect, isOnLine sw beg end p]
-    where
-        rect = [(x,y) | x <- [bsx..esx], y <- [bsy..esy]]
-        sr = sw
-        bsx = if bx < ex then bx - sr else ex - sr
-        esx = if bx < ex then ex + sr else bx + sr
-        bsy = if by < ey then by - sr else ey - sr
-        esy = if by < ey then ey + sr else by + sr
-
-
-isOnLine :: Float -> P2 -> P2 -> P2 -> Bool
-isOnLine sw beg end poi = (sw/2) > lineDistance beg end poi
-
-lineDistance :: P2 -> P2 -> P2 -> Float 
-lineDistance (bx,by) (ex,ey) (px,py) = 
-        foldr (\x out -> if x < out then x else out) 10000 [distToLine, ditstToEnd, distToBeg]
-    where        
-        -- https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-        distToLine = (abs ((esy-bsy)*px - (esx-bsx)*py + esx*bsy - esy*bsx)) / (sqrt ((esy-bsy)^2 + (esx-bsx)^2)) 
-        distToBeg = veclength2 $ (bsx,bsy) - (px,py)
-        ditstToEnd = veclength2 $ (esx,esy) - (px,py) 
-        bsx = if bx < ex then bx  else ex 
-        esx = if bx < ex then ex  else bx 
-        bsy = if by < ey then by  else ey 
-        esy = if by < ey then ey  else by 
     
-
-drawEllipsoide col t (_,_,z) | outOfRange t z = return ()
+drawEllipsoide :: Col -> Transform -> P3 -> Draw
+drawEllipsoide col t (_,_,z) | outOf3DRange t z = return ()
       | otherwise = do
         strokeFill col
         strokeWeight 1
         ellipse (centerOf $ transition t) $ whAt t $ distE t z
 
 
-ellipsoidePath t z 
-  | outOfRange t z = []
-  | otherwise = [p | p <- rectPath t z, insideEllipse f1 f2 a p]    
-    where
-        (wx,wy) = whAt t $ distE t z
-        (rx,ry) = (wx/2, wy/2)
-        (cx,cy) = centerOf $ transition t
-        a = if wx > wy then rx else ry
-        focalOffset = if wx > wy then sqrt (rx^2 - ry^2) else sqrt (ry^2 - rx^2)
-        (f1,f2) = if wx > wy 
-                  then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
-                  else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
-
-
-centerOf :: P3 -> P2
-centerOf (x,y,z) = (x,y)
-
-whAt :: Transform -> Float -> P2
-whAt (T _ _ (x,y,_)) d = (sliceR x, sliceR y)
-    where sliceR axis = sqrt $ (axis/2) ^ 2 - d ^ 2
-
-distE :: Transform -> Float -> Float
-distE t z = abs $ (-) z $ trd $ transition t
-
-trd :: (a,b,c) -> c
-trd (_,_,x) = x
-
-
-sphere :: P3 -> Float -> Col -> Geometry
-sphere transition width col = Geo (T transition (0,0,0) (width, width, width)) (drawEllipsoide col) ellipsoidePath
-
-cube :: Transform -> Float -> Col -> Geometry
-cube t strkW col = Geo t (drawCube col strkW) (cubePath strkW)
-
-fullCube :: Transform -> Col -> Geometry
-fullCube t col = Geo t (drawFullCube col) rectPath
-
-gLine :: P2 -> P2 -> Float -> Float -> Col -> Geometry
-gLine (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLine strkW col) (gLinePath strkW)
-
-ellipsoide :: Transform -> Col -> Geometry
-ellipsoide t col = Geo t (drawEllipsoide col) ellipsoidePath
-
-boss :: Transform -> Actor
-boss t = A (Geo t drawBoss rectPath) bossTick  --TODO maybe rectpath is not suited that well
-
 
 drawBoss :: Transform -> P3 -> Draw
 drawBoss t (px,py,pz) 
-  | outOfRange t pz = return ()
+  | outOf3DRange t pz = return ()
   | otherwise = do 
         stroke black
         strokeWeight 6
@@ -218,30 +175,9 @@ drawBoss t (px,py,pz)
             upperPupilMid = upperEyeMid - (upperEyeVecNorm `timesF` pupilRadius)
 
 
-norm2 :: (Float,Float) -> (Float,Float)
-norm2 (0,0) = (0,0)
-norm2 vec = vec `divF` veclength2 vec
-
-veclength2 :: (Float,Float) -> Float
-veclength2 (0,0) = 0
-veclength2 (x,y) = sqrt (x^2 + y^2)
-
-timesF :: (Float,Float) -> Float -> (Float,Float)
-timesF (x,y) t = (t*x, t*y)
-
-tupleAdd :: (a,a) -> b -> (a,a,b)
-tupleAdd (x,y) z = (x,y,z)
-
-divF :: (Float,Float) -> Float -> (Float,Float)
-divF (x,y) t = (x/t,y/t)
-
-bossTick a = a
-
-cylinder :: Transform -> Col -> Float -> Geometry
-cylinder t col sw = Geo t (drawCylinder col col sw) cylinderPath
-
+drawCylinder :: Col -> Col -> StrokeWeight -> Transform -> P3 -> Draw
 drawCylinder col scol sw t (_,_,z) 
-  | outOfRange t z = return ()
+  | outOf3DRange t z = return ()
   | otherwise = do
     fill col
     stroke scol
@@ -251,40 +187,7 @@ drawCylinder col scol sw t (_,_,z)
         (sx,sy,sz) = scaling t
         c = centerOf $ transition t
 
-cylinderPath t z 
-  | outOfRange t z = []
-  | otherwise = [p | p <- rectPath t z, insideEllipse f1 f2 a p]    
-    where
-        (sx,sy,sz) = scaling t
-        (rx,ry) = (sx/2, sy/2)
-        (cx,cy) = centerOf $ transition t
-        a = if sx > sy then rx else ry
-        focalOffset = if sx > sy then sqrt (rx^2 - ry^2) else sqrt (ry^2 - rx^2)
-        (f1,f2) = if sx > sy 
-                  then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
-                  else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
-
-insideEllipse :: P2 -> P2 -> Float -> P2 -> Bool
-insideEllipse f1 f2 a p = 
-    distf2 + distf1 < 2*a 
-    where
-        distf1 = veclength2 (f1 - p)
-        distf2 = veclength2 (f2 - p)
-
-rectPath t z
-  | outOfRange t z = []
-  | otherwise = [(x,y) | x <- [minX..maxX], y <- [minY..maxY]]
-    where 
-        (sx,sy,sz) = scaling t
-        (rx,ry) = (sx/2, sy/2)
-        (cx,cy) = centerOf $ transition t
-        minX = cx - rx
-        maxX = cx + rx
-        minY = cy - ry
-        maxY = cy + ry
-
-
-
+drawHenge :: Transform -> P3 -> Draw
 drawHenge t@(T (x,y,z) r (sx,sy,sz)) p@(px,py,_) = do
     drawCylinder col scol sw (T north r (radius,radius,sz)) p
     drawCylinder col scol sw (T northeast r (radius,radius,sz)) p
@@ -316,6 +219,102 @@ drawHenge t@(T (x,y,z) r (sx,sy,sz)) p@(px,py,_) = do
         inYrange = y + sy/4 >= py && y - sy/4 <= py
         (col,scol) = if inXrange && inYrange then (white,black) else (black,black)
 
-henge t = Geo t drawHenge hengePath
+-- Path functions
 
+fullRectPath :: Transform -> Z -> Path
+fullRectPath = fullRectPathInRange outOf2DRange
+
+fullCubePath :: Transform -> Z -> Path
+fullCubePath = fullRectPathInRange outOf3DRange
+
+fullRectPathInRange :: (Transform -> Z -> Bool) -> Transform -> Z -> Path
+fullRectPathInRange rangeFunction t z
+  | rangeFunction t z = []
+  | otherwise = [(x,y) | x <- [minX..maxX], y <- [minY..maxY]]
+    where 
+        (sx,sy,sz) = scaling t
+        (rx,ry) = (sx/2, sy/2)
+        (cx,cy) = centerOf $ transition t
+        minX = cx - rx
+        maxX = cx + rx
+        minY = cy - ry
+        maxY = cy + ry
+
+rectPath :: StrokeWeight -> Transform -> Z -> Path
+rectPath = rectPathInRange outOf2DRange
+
+
+cubePath :: StrokeWeight -> Transform -> Z -> Path
+cubePath = rectPathInRange outOf3DRange
+
+rectPathInRange :: (Transform -> Z -> Bool) -> StrokeWeight -> Transform -> Z -> Path
+rectPathInRange rangeFunction sw t z | rangeFunction t z = []
+      | otherwise = linePathing sw leftLower leftUpper ++ 
+                    linePathing sw leftUpper rightUpper ++
+                    linePathing sw rightUpper rightLower ++
+                    linePathing sw rightLower leftLower 
+        where
+            (sx,sy,sz) = scaling t
+            (cx,cy) = centerOf $ transition t
+            leftLower = (cx - sx/2, cy + sy/2)
+            leftUpper = (cx - sx/2, cy - sy/2)
+            rightLower = (cx + sx/2, cy + sy/2)
+            rightUpper = (cx + sx/2, cy - sy/2)
+
+
+cylinderPath :: Transform -> Z -> Path
+cylinderPath t z 
+  | outOf3DRange t z = []
+  | otherwise = [p | p <- fullCubePath t z, insideEllipse f1 f2 a p]    
+    where
+        (sx,sy,sz) = scaling t
+        (rx,ry) = (sx/2, sy/2)
+        (cx,cy) = centerOf $ transition t
+        a = if sx > sy then rx else ry
+        focalOffset = if sx > sy then sqrt (rx^2 - ry^2) else sqrt (ry^2 - rx^2)
+        (f1,f2) = if sx > sy 
+                  then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
+                  else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
+
+ellipsoidePath :: Transform -> Z -> Path
+ellipsoidePath t z 
+  | outOf3DRange t z = []
+  | otherwise = [p | p <- fullCubePath t z, insideEllipse f1 f2 a p]    
+    where
+        (wx,wy) = whAt t $ distE t z
+        (rx,ry) = (wx/2, wy/2)
+        (cx,cy) = centerOf $ transition t
+        a = if wx > wy then rx else ry
+        focalOffset = if wx > wy then sqrt (rx^2 - ry^2) else sqrt (ry^2 - rx^2)
+        (f1,f2) = if wx > wy 
+                  then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
+                  else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
+
+gLinePath :: StrokeWeight -> Transform -> Z -> Path
+gLinePath sw t z | outOf2DRange t z = []
+      | otherwise = linePathing sw beg end
+        where            
+            (bx,by,_) = transition t
+            beg = (bx,by)
+            (ex,ey,_) = scaling t
+            end = (ex,ey)
+
+linePathing :: StrokeWeight -> P2 -> P2 -> Path
+linePathing sw beg@(bx,by) end@(ex,ey) = [p | p <- rect, isOnLine sw beg end p]
+    where
+        rect = [(x,y) | x <- [bsx..esx], y <- [bsy..esy]]
+        sr = sw
+        bsx = if bx < ex then bx - sr else ex - sr
+        esx = if bx < ex then ex + sr else bx + sr
+        bsy = if by < ey then by - sr else ey - sr
+        esy = if by < ey then ey + sr else by + sr
+
+
+hengePath :: Path
 hengePath = const $ const []
+
+
+
+
+-- Ticks
+bossTick a = a --Constant Tick

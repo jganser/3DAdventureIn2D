@@ -19,12 +19,12 @@ level1 = [
     cube (T (50,225,50) (0,0,0) (200, 50,120)) 12 blue,
     fullCube (T (200,200,50) (0,0,0) (100,  150, 120)) (rgb 128 240 240),
     fullCube (T (200,300,50) (0,0,0) (400, 50, 120)) (rgb 240 128 128),
-    cylinder (T (250,250,250) (0,0,0) (100,100,100)) olive,
+    cylinder (T (250,250,250) (0,0,0) (100,100,100)) olive 1,
     henge (T hengePos (0,0,0) (200,200,200)),
     --lines 
     gLine (px,py) (bx,by) 0 5 black,
     gLine ( 50, 50) (100,200)  0 12 black,
-    gLine (150,150) (400,200)  0  5 red,
+    gLine (150,150) (400,200)  0  5 red
     
     ]
     
@@ -34,10 +34,10 @@ level2 = [
     , gLine (150,150) (300,200) 10  4 lime
     ]
 
-ps = playerStart
-bs = bossStart
+ps@(px,py,pz) = playerStart
+bs@(bx,by,bz) = bossStart
 
 level1Actors = [
     --boss
-    boss (T bossStart (0,0,0) (bossSize,bossSize,bossSize))
+    boss (T bs (0,0,0) (bossSize,bossSize,bossSize))
     ]

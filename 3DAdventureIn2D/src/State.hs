@@ -5,12 +5,12 @@ import Levels
 import Geometry
 import Actor
 import Constants
+import DayTime
 --import Graphics.Proc
 
 
 data GameState = Running | GameOver | GameWon
 
-data DayTime = Night | Day
 
 data State = ST {
     dotPos :: (Float,Float,Float), 

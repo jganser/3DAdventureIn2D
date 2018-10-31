@@ -24,7 +24,7 @@ setup = do
 
 draw :: State -> Pio ()
 draw st = do     
-        background (grey 255)
+        bgForDayTime st 
         let geos = objects st
         let acts = actors st 
         mapM_ (drawAt (dotPos st)) geos
@@ -37,6 +37,10 @@ draw st = do
 update :: State -> Pio State
 update st = return st
 
+
+bgForDayTime :: State -> Pio ()
+bgForDayTime st | daytime st == Night = background black 
+                | otherwise = background white
 
 movement :: State -> Pio State
 movement st = do
