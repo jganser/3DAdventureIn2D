@@ -1,5 +1,7 @@
 module ObjectUtils where
 
+import Graphics.Proc
+import Geometry
 
 type Z = Float
 type StrokeWeight = Float
@@ -32,7 +34,7 @@ veclength2 (x,y) = sqrt (x^2 + y^2)
 timesF :: (Float,Float) -> Float -> (Float,Float)
 timesF (x,y) t = (t*x, t*y)
 
-tupleAdd :: (a,a) -> b -> (a,a,b)
+tupleAdd :: (a,b) -> c -> (a,b,c)
 tupleAdd (x,y) z = (x,y,z)
 
 divF :: (Float,Float) -> Float -> (Float,Float)

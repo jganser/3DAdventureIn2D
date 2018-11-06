@@ -9,5 +9,5 @@ data Actor = A {
     }
 
 instance Drawable Actor where
-    drawAt z (A geo _) = drawAt z geo
+    drawAt daytime z (A geo _) = drawAt daytime z geo
     path z (A geo _) = path z geo

@@ -24,6 +24,7 @@ dependencies:
 #- Yampa >= 0.11 && < 0.20
 - hsnoise >= 0.0.2
 - processing-for-haskell >= 0.1.0.1
+#- xeno >= 0.3.4
 
 library:
   source-dirs: src

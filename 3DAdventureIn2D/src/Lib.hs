@@ -8,6 +8,9 @@ import Constants
 import State
 import Levels
 import Drawable
+import CharacterSet hiding (size)
+import qualified CharacterSet as CS
+import DayTime
 import Data.List (union)
 import Prelude hiding (lines)
 
@@ -24,13 +27,27 @@ setup = do
 
 draw :: State -> Pio ()
 draw st = do     
-        bgForDayTime st 
+        -- provide easy access for pure values
+        let time = daytime st        
         let geos = objects st
         let acts = actors st 
-        mapM_ (drawAt (dotPos st)) geos
-        mapM_ (drawAt (dotPos st)) acts
+        let playerPos = dotPos st
+        -- draw the scene
+            -- draw the background for the current daytime
+        bgForDayTime time
+            -- draw simple gemoetries if they are visible, with regards to daytime
+        mapM_ (drawAt time playerPos) geos
+            -- draw actors if they are visible, with regards to daytime
+        mapM_ (drawAt time playerPos) acts
+            -- draw the player, regardless of daytime 
         strokeFill aqua
         circle playerSize (xy (dotPos st))
+            -- draw hostage, if visible
+        --TODO
+        -- Text Test !! 
+        let pText = PText "Hello World!" (100,100) 4 white black
+        drawPText pText time
+
     where xy (px,py,pz) = (px,py)      
         
 
@@ -38,9 +55,9 @@ update :: State -> Pio State
 update st = return st
 
 
-bgForDayTime :: State -> Pio ()
-bgForDayTime st | daytime st == Night = background black 
-                | otherwise = background white
+bgForDayTime :: DayTime -> Pio ()
+bgForDayTime daytime | daytime == Night = background black 
+                     | otherwise = background white
 
 movement :: State -> Pio State
 movement st = do

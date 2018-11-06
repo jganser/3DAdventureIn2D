@@ -22,6 +22,7 @@ import Drawable
 import Geometry
 import Actor
 import ObjectUtils
+import DayTime
 
 -- 2D Objects
 
@@ -61,16 +62,16 @@ boss t = A (Geo t drawBoss fullCubePath) bossTick  --TODO maybe fullCubePath is 
 
 
 -- Draw functions
-drawRect :: Col -> StrokeWeight -> Transform -> P3 -> Draw
+drawRect :: Col -> StrokeWeight -> Transform -> DayTime -> P3 -> Draw
 drawRect = drawRectInRange outOf2DRange
 
-drawCube :: Col -> StrokeWeight -> Transform -> P3 -> Draw
+drawCube :: Col -> StrokeWeight -> Transform -> DayTime -> P3 -> Draw
 drawCube = drawRectInRange outOf3DRange
 
-drawRectInRange :: (Transform -> Z -> Bool) -> Col -> StrokeWeight -> Transform -> P3 -> Draw
-drawRectInRange rangeFunction col strkW t (_,_,z)  | rangeFunction t z = return ()
+drawRectInRange :: (Transform -> Z -> Bool) -> Col -> StrokeWeight -> Transform -> DayTime -> P3 -> Draw
+drawRectInRange rangeFunction col strkW t dt (_,_,z)  | rangeFunction t z = return ()
       | otherwise = do 
-        stroke col
+        stroke $ colorForDayTime col dt
         strokeWeight strkW
         linePath [leftLower, leftUpper, rightUpper, rightLower, leftLower]
         where 
@@ -82,16 +83,16 @@ drawRectInRange rangeFunction col strkW t (_,_,z)  | rangeFunction t z = return 
             rightUpper = (cx + sx/2, cy - sy/2)
 
 
-drawFullRect :: Col -> Transform -> P3 -> Draw
+drawFullRect :: Col -> Transform -> DayTime -> P3 -> Draw
 drawFullRect = drawFullRectInRange outOf2DRange
 
-drawFullCube :: Col -> Transform -> P3 -> Draw
+drawFullCube :: Col -> Transform -> DayTime -> P3 -> Draw
 drawFullCube = drawFullRectInRange outOf3DRange
 
-drawFullRectInRange :: (Transform -> Z -> Bool) -> Col -> Transform -> P3 -> Draw
-drawFullRectInRange rangeFunction col t (_,_,z) | rangeFunction t z = return ()
+drawFullRectInRange :: (Transform -> Z -> Bool) -> Col -> Transform -> DayTime -> P3 -> Draw
+drawFullRectInRange rangeFunction col t dt (_,_,z) | rangeFunction t z = return ()
       | otherwise = do
-        strokeFill col
+        strokeFill $ colorForDayTime col dt
         strokeWeight 1
         rectMode Corners
         rect leftLower rightUpper         
@@ -103,48 +104,46 @@ drawFullRectInRange rangeFunction col t (_,_,z) | rangeFunction t z = return ()
 
 
 
-drawLine :: StrokeWeight -> Col -> Transform -> P3 -> Draw
-drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) (_,_,z) | outOf2DRange t z = return ()
+drawLine :: StrokeWeight -> Col -> Transform -> DayTime -> P3 -> Draw
+drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) dt (_,_,z) | outOf2DRange t z = return ()
       | otherwise = do
         strokeWeight sw
-        stroke col
+        stroke $ colorForDayTime col dt
         line begin end
         where
             begin = (tx,ty)
             end = (sx,sy)
     
     
-drawEllipsoide :: Col -> Transform -> P3 -> Draw
-drawEllipsoide col t (_,_,z) | outOf3DRange t z = return ()
+drawEllipsoide :: Col -> Transform -> DayTime -> P3 -> Draw
+drawEllipsoide col t dt (_,_,z) | outOf3DRange t z = return ()
       | otherwise = do
-        strokeFill col
+        strokeFill $ colorForDayTime col dt
         strokeWeight 1
         ellipse (centerOf $ transition t) $ whAt t $ distE t z
 
 
 
-drawBoss :: Transform -> P3 -> Draw
-drawBoss t (px,py,pz) 
+drawBoss :: Transform -> DayTime -> P3 -> Draw
+drawBoss t dt (px,py,pz) 
   | outOf3DRange t pz = return ()
   | otherwise = do 
-        stroke black
+        stroke $ colorForDayTime black dt
         strokeWeight 6
         -- corpus
         line leftUpper rightUpper
         line rightUpper rightLower
         line rightLower leftLower
-
         -- mouth --TODO
         line (fst leftLower, leftFstThirdUp) (fst leftLower, leftSndThirdUp)
-
         -- round stuff
         strokeWeight 1
         -- eyes
-        fill white
+        fill $ colorForDayTime white dt
         circle eyeRadius lowerEyeMid
         circle eyeRadius upperEyeMid
         -- pupils
-        strokeFill black
+        strokeFill $ colorForDayTime black dt
         circle pupilRadius lowerPupilMid
         circle pupilRadius upperPupilMid
         where 
@@ -175,28 +174,28 @@ drawBoss t (px,py,pz)
             upperPupilMid = upperEyeMid - (upperEyeVecNorm `timesF` pupilRadius)
 
 
-drawCylinder :: Col -> Col -> StrokeWeight -> Transform -> P3 -> Draw
-drawCylinder col scol sw t (_,_,z) 
+drawCylinder :: Col -> Col -> StrokeWeight -> Transform -> DayTime -> P3 -> Draw
+drawCylinder col scol sw t dt (_,_,z) 
   | outOf3DRange t z = return ()
   | otherwise = do
-    fill col
-    stroke scol
+    fill $ colorForDayTime col dt
+    stroke $ colorForDayTime scol dt
     strokeWeight sw
     ellipse c (sx/2, sy/2)
     where
         (sx,sy,sz) = scaling t
         c = centerOf $ transition t
 
-drawHenge :: Transform -> P3 -> Draw
-drawHenge t@(T (x,y,z) r (sx,sy,sz)) p@(px,py,_) = do
-    drawCylinder col scol sw (T north r (radius,radius,sz)) p
-    drawCylinder col scol sw (T northeast r (radius,radius,sz)) p
-    drawCylinder col scol sw (T east r (radius,radius,sz)) p
-    drawCylinder col scol sw (T southeast r (radius,radius,sz)) p
-    drawCylinder col scol sw (T south r (radius,radius,sz)) p
-    drawCylinder col scol sw (T southwest r (radius,radius,sz)) p
+drawHenge :: Transform -> DayTime -> P3 -> Draw
+drawHenge t@(T (x,y,z) r (sx,sy,sz)) dt p@(px,py,_) = do
+    drawCylinder col scol sw (T north r (radius,radius,sz)) dt p
+    drawCylinder col scol sw (T northeast r (radius,radius,sz)) dt p
+    drawCylinder col scol sw (T east r (radius,radius,sz)) dt p
+    drawCylinder col scol sw (T southeast r (radius,radius,sz)) dt p
+    drawCylinder col scol sw (T south r (radius,radius,sz)) dt p
+    drawCylinder col scol sw (T southwest r (radius,radius,sz)) dt p
     -- west is the opening
-    drawCylinder col scol sw (T northwest r (radius,radius,sz)) p
+    drawCylinder col scol sw (T northwest r (radius,radius,sz)) dt p
     where
         sw = 1
         hengeRadX = sx/8
@@ -310,7 +309,7 @@ linePathing sw beg@(bx,by) end@(ex,ey) = [p | p <- rect, isOnLine sw beg end p]
         esy = if by < ey then ey + sr else by + sr
 
 
-hengePath :: Path
+hengePath :: Transform -> Z -> Path
 hengePath = const $ const []
 
 
