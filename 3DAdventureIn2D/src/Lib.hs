@@ -8,6 +8,7 @@ import Constants
 import State
 import Levels
 import Drawable
+import Actor
 import CharacterSet hiding (size)
 import qualified CharacterSet as CS
 import DayTime
@@ -52,7 +53,9 @@ draw st = do
         
 
 update :: State -> Pio State
-update st = return st
+update st = do    
+    let updatedActors = map (\a -> (tick a) a) $ actors st
+    return $ st { actors = updatedActors }
 
 
 bgForDayTime :: DayTime -> Pio ()

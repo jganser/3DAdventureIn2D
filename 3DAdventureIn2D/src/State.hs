@@ -20,5 +20,5 @@ data State = ST {
     daytime :: DayTime
 }
 
-emptyState = ST playerStart [] [] Running Night
+emptyState = ST playerStart [] [] Running Day
 

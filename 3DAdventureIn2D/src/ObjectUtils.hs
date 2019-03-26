@@ -27,9 +27,17 @@ norm2 :: (Float,Float) -> (Float,Float)
 norm2 (0,0) = (0,0)
 norm2 vec = vec `divF` veclength2 vec
 
+norm3 :: (Float,Float,Float) -> (Float,Float,Float)
+norm3 (0,0,0) = (0,0,0)
+norm3 vec = vec / (veclength3 vec, veclength3 vec, veclength3 vec)
+
 veclength2 :: (Float,Float) -> Float
 veclength2 (0,0) = 0
 veclength2 (x,y) = sqrt (x^2 + y^2)
+
+veclength3 :: (Float,Float,Float) -> Float
+veclength3 (0,0,0) = 0
+veclength3 (x,y,z) = sqrt (x^2 + y^2 + z^2)
 
 timesF :: (Float,Float) -> Float -> (Float,Float)
 timesF (x,y) t = (t*x, t*y)

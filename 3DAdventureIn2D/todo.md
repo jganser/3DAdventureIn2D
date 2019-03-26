@@ -20,6 +20,7 @@
   * [ ] Plott
     * [ ] Level changers
     * [ ] NPCs
+      * [ ] males
       * [ ] females
       * [ ] love
       * [ ] old shaman
@@ -35,10 +36,10 @@
   * [x] Day and Night drawing (color vs  shades of grey)
     * [x] convert color function
     * [x] update draw functions
-  * [ ] Moving Actors
-    * [ ] Platforms
-    * [ ] Lift
-    * [ ] 2D Lift -> gone or not gone
+  * [x] Moving Actors
+    * [x] Platforms
+    * [x] Lift
+    * [x] 2D Lift -> gone or not gone
   * [ ] Jump
     * [ ] Falling Down
     * [ ] Leap of faith
@@ -55,6 +56,14 @@
   * [ ] rotateZ
     * [ ] update path functions
     * [ ] update hollow forms... maybe use rect with nofill instead of lines...
+
+* [ ] Optimization
+  * [ ] Static Path Information in static Geometry, instead of function
+  * [ ] Static Path Information in Level for static, Geometry
+  * [ ] Draw static Level as one shape
+  * [ ] Parallized Path Calculation for (Moving) Actors
+  * [ ] Parallized draw (?)
+
 
 * [ ] Commenting
 

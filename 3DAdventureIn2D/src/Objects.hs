@@ -2,16 +2,17 @@
 
 
 module Objects(
-    sphere 
-    ,ellipsoide
-    ,cube
-    ,fullCube
-    ,gLine
-    ,gRect
-    ,gFullRect
-    ,boss
-    ,cylinder
-    ,henge
+      sphere 
+    , ellipsoide
+    , cube
+    , fullCube
+    , gLine
+    , gRect
+    , gFullRect
+    , boss
+    , cylinder
+    , henge
+    , movingActor
     --,lineDistance
     --,fullCubePath
     ,
@@ -56,9 +57,14 @@ ellipsoide t col = Geo t (drawEllipsoide col) ellipsoidePath
 henge :: Transform -> Geometry
 henge t = Geo t drawHenge hengePath
 
+-- Actors
+
 boss :: Transform -> Actor
 boss t = A (Geo t drawBoss fullCubePath) bossTick  --TODO maybe fullCubePath is not suited that well
 
+
+movingActor :: P3 -> P3 -> Float -> Geometry -> Actor
+movingActor start end speed geo = A geo (moveBetweenWithSpeed start end speed)
 
 
 -- Draw functions
@@ -317,3 +323,31 @@ hengePath = const $ const []
 
 -- Ticks
 bossTick a = a --Constant Tick
+
+moveBetweenWithSpeed :: P3 -> P3 -> Float -> Actor -> Actor
+moveBetweenWithSpeed start end speed a = setToStart
+    where
+        (T loc r s) = transform $ geo a
+        geometry = geo a
+        setToStart = a { geo =  startGeo, tick = moveTo False start end speed}
+            
+        startTransform = (T start r s)
+        startGeo = geometry { transform = startTransform }
+
+moveTo :: Bool -> P3 -> P3 -> Float -> Actor -> Actor
+moveTo goalIsStart start end speed a = a { geo = newGeo, tick = newTick }
+    where
+        goal = if goalIsStart then start else end
+        (T loc r s) = transform $ geo a
+        geometry = geo a
+        direction@(dx,dy,dz) = norm3 $ goal - loc 
+        newPos@(npx,npy,npz) = loc + direction * (speed,speed,speed)
+        newDirection@(ndx,ndy,ndz) = goal - newPos
+        beyondGoal = (dx * ndx + dy * ndy + dz * ndz) < 0
+        newTransform = if beyondGoal then T goal r s else T newPos r s
+        newGeo = geometry { transform = newTransform }
+        newTick = if beyondGoal 
+                  then moveTo (not goalIsStart) start end speed 
+                  else moveTo goalIsStart start end speed
+
+
