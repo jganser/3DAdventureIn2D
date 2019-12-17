@@ -13,6 +13,11 @@ playerStart = (50,200,0)
 playerSize :: Float
 playerSize = 10
 
+femalePos :: (Float,Float,Float)
+femalePos = (600,200,0)
+
+
+
 bossStart :: (Float,Float,Float)
 bossStart = (600,200,0)
 

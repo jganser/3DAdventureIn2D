@@ -40,5 +40,5 @@ bs@(bx,by,bz) = bossStart
 level1Actors = [
       --boss
       boss (T bs (0,0,0) (bossSize,bossSize,bossSize))
-    , movingActor (0,0,0) (400,400,0) 1 $ cube (T (300,275,50) (0,0,0) (100,150,100))  5 green
+    , movingActor (0,0,0) (400,400,0) 1 $ fullCube (T (300,275,50) (0,0,0) (75,50,10)) green
     ]

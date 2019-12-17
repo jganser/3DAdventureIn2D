@@ -60,11 +60,11 @@ henge t = Geo t drawHenge hengePath
 -- Actors
 
 boss :: Transform -> Actor
-boss t = A (Geo t drawBoss fullCubePath) bossTick  --TODO maybe fullCubePath is not suited that well
+boss t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] --TODO maybe fullCubePath is not suited that well | TODO fill text
 
 
 movingActor :: P3 -> P3 -> Float -> Geometry -> Actor
-movingActor start end speed geo = A geo (moveBetweenWithSpeed start end speed)
+movingActor start end speed geo = A geo (moveBetweenWithSpeed start end speed) True False False []
 
 
 -- Draw functions

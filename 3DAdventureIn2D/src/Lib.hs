@@ -42,8 +42,11 @@ draw st = do
         mapM_ (drawAt time playerPos) acts
             -- draw the player, regardless of daytime 
         strokeFill aqua
+        strokeWeight 1
         circle playerSize (xy (dotPos st))
             -- draw hostage, if visible
+        drawFemale femalePos playerSize playerPos
+        
         --TODO
         -- Text Test !! 
         let pText = PText "Hello World!" (100,100) 4 white black
@@ -51,6 +54,16 @@ draw st = do
 
     where xy (px,py,pz) = (px,py)      
         
+drawFemale p@(x,y,z) size player@(p1,p2,p3) 
+  | p3 /= z = return ()
+  | otherwise = do
+    strokeFill $ rgb 255 192 203 
+    triangle leftUp rightUp bottom
+      where
+        bottom = (x, y - size)
+        ditsUp = ((sqrt 2)/2) * (size)
+        leftUp = (x - ditsUp, y + size)
+        rightUp = (x + ditsUp, y + size)
 
 update :: State -> Pio State
 update st = do    
@@ -68,10 +81,14 @@ movement st = do
     --mapM_ point allPath
     arrow <- key
     case arrow of
-        SpecialKey KeyUp -> return (st {dotPos = onPath st ((0,-2,0) + dotPos st)})
-        SpecialKey KeyDown -> return (st {dotPos = onPath st ((0,2,0) + dotPos st)})
+        SpecialKey KeyUp    -> return (st {dotPos = onPath st ((0,-2,0) + dotPos st)})
+        Char 'w'            -> return (st {dotPos = onPath st ((0,-2,0) + dotPos st)})
+        SpecialKey KeyDown  -> return (st {dotPos = onPath st ((0,2,0) + dotPos st)})
+        Char 's'            -> return (st {dotPos = onPath st ((0,2,0) + dotPos st)})
         SpecialKey KeyRight -> return (st {dotPos = onPath st ((2,0,0) + dotPos st)})
-        SpecialKey KeyLeft -> return (st {dotPos = onPath st ((-2,0,0) + dotPos st)})
+        Char 'd'            -> return (st {dotPos = onPath st ((2,0,0) + dotPos st)})
+        SpecialKey KeyLeft  -> return (st {dotPos = onPath st ((-2,0,0) + dotPos st)})
+        Char 'a'            -> return (st {dotPos = onPath st ((-2,0,0) + dotPos st)})
         _ -> return st
 
         where
