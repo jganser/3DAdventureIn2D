@@ -1,3 +1,4 @@
 .stack-work/
 3DAdventureIn2D.cabal
 *~
+stack.yaml.lock
