@@ -2,6 +2,8 @@ module Actor where
 
 import Drawable
 import Geometry
+import ObjectUtils
+
 
 data Actor = A {
         geo :: Geometry
@@ -15,8 +17,10 @@ data Actor = A {
 pIsOnActor :: Actor -> (Float,Float,Float) -> Bool
 pIsOnActor a p@(x,y,z) = path z a /= []
 
+aPos a = transition $ transform $ geo a
+azPos = trd . aPos
 
 
 instance Drawable Actor where
-    drawAt daytime z a = drawAt daytime z (geo a)
+    drawAt daytime playerPos a = drawAt daytime playerPos (geo a)
     path z a = path z (geo a)

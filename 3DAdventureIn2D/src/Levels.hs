@@ -5,9 +5,7 @@ import Constants
 import Geometry
 import Graphics.Proc
 
-
 type Level = [Geometry]
-
 
 
 level1  :: Level

@@ -6,19 +6,25 @@ import Geometry
 import Actor
 import Constants
 import DayTime
---import Graphics.Proc
+import Player
+import Graphics.Proc
 
 
 data GameState = Running | GameOver | GameWon
 
 
 data State = ST {
-    dotPos :: (Float,Float,Float), 
+    player :: Player, 
     objects :: [Geometry],
     actors :: [Actor],
     gameState :: GameState,
     daytime :: DayTime
 }
 
-emptyState = ST playerStart [] [] Running Day
+emptyState = ST (newPlayer playerStart) [] [] Running Day
 
+dotpos :: State -> P3
+dotpos = pos . player 
+
+newPos :: P3 -> State -> State
+newPos pos st = st { player = updatePos pos $ player st }

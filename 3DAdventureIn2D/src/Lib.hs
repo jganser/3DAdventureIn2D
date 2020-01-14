@@ -32,7 +32,7 @@ draw st = do
         let time = daytime st        
         let geos = objects st
         let acts = actors st 
-        let playerPos = dotPos st
+        let playerPos = dotpos st
         -- draw the scene
             -- draw the background for the current daytime
         bgForDayTime time
@@ -43,9 +43,9 @@ draw st = do
             -- draw the player, regardless of daytime 
         strokeFill aqua
         strokeWeight 1
-        circle playerSize (xy (dotPos st))
+        circle playerSize (xy (dotpos st))
             -- draw hostage, if visible
-        drawFemale femalePos playerSize playerPos
+        drawFemale femaleStart playerSize playerPos
         
         --TODO
         -- Text Test !! 
@@ -81,19 +81,19 @@ movement st = do
     --mapM_ point allPath
     arrow <- key
     case arrow of
-        SpecialKey KeyUp    -> return (st {dotPos = onPath st ((0,-2,0) + dotPos st)})
-        Char 'w'            -> return (st {dotPos = onPath st ((0,-2,0) + dotPos st)})
-        SpecialKey KeyDown  -> return (st {dotPos = onPath st ((0,2,0) + dotPos st)})
-        Char 's'            -> return (st {dotPos = onPath st ((0,2,0) + dotPos st)})
-        SpecialKey KeyRight -> return (st {dotPos = onPath st ((2,0,0) + dotPos st)})
-        Char 'd'            -> return (st {dotPos = onPath st ((2,0,0) + dotPos st)})
-        SpecialKey KeyLeft  -> return (st {dotPos = onPath st ((-2,0,0) + dotPos st)})
-        Char 'a'            -> return (st {dotPos = onPath st ((-2,0,0) + dotPos st)})
+        SpecialKey KeyUp    -> return (newPos (onPath st ((0,-2,0) + dotpos st)) st)
+        Char 'w'            -> return (newPos (onPath st ((0,-2,0) + dotpos st)) st)
+        SpecialKey KeyDown  -> return (newPos (onPath st ((0,2,0) + dotpos st)) st)
+        Char 's'            -> return (newPos (onPath st ((0,2,0) + dotpos st)) st)
+        SpecialKey KeyRight -> return (newPos (onPath st ((2,0,0) + dotpos st)) st)
+        Char 'd'            -> return (newPos (onPath st ((2,0,0) + dotpos st)) st)
+        SpecialKey KeyLeft  -> return (newPos (onPath st ((-2,0,0) + dotpos st)) st)
+        Char 'a'            -> return (newPos (onPath st ((-2,0,0) + dotpos st)) st)
         _ -> return st
 
         where
-            (_,_,z) = dotPos st
-            onPath st p = if elem (p1,p2) allPath then p else dotPos st
+            (_,_,z) = dotpos st
+            onPath st p = if elem (p1,p2) allPath then p else dotpos st
                 where
                     (p1,p2,_) = p
             allObjectPath = foldr (\o ps -> ((++ ps) . path z) o) [] $ objects st

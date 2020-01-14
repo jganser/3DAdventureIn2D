@@ -342,7 +342,7 @@ moveTo goalIsStart start end speed a = a { geo = newGeo, tick = newTick }
         geometry = geo a
         direction@(dx,dy,dz) = norm3 $ goal - loc 
         newPos@(npx,npy,npz) = loc + direction * (speed,speed,speed)
-        newDirection@(ndx,ndy,ndz) = goal - newPos
+        newDirection@(ndx,ndy,ndz) = norm3 $ goal - newPos
         beyondGoal = (dx * ndx + dy * ndy + dz * ndz) < 0
         newTransform = if beyondGoal then T goal r s else T newPos r s
         newGeo = geometry { transform = newTransform }

@@ -15,3 +15,9 @@ data Geometry = Geo {
 instance Drawable Geometry where
     drawAt daytime pPos (Geo t drawIt _) = drawIt t daytime pPos
     path height (Geo t _ pathOfIt) = pathOfIt t height
+
+newGeoPos :: P3 -> Geometry -> Geometry
+newGeoPos pos g = g { transform = newTPos pos $ transform g}
+
+newTPos :: P3 -> Transform -> Transform
+newTPos pos t = t { transition = pos}
