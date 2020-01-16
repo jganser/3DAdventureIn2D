@@ -2,13 +2,13 @@ module Constants where
 
 
 width :: Float
-width = 1024.0
+width = 1240.0
 
 height :: Float
-height = 720.0
+height = 1060.0
 
 playerStart :: (Float,Float,Float)
-playerStart = (100,320,0)
+playerStart = (100,330,0)
 
 playerSize :: Float
 playerSize = 5

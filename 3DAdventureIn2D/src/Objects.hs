@@ -9,6 +9,8 @@ module Objects(
     , gLine
     , gRect
     , gFullRect
+    , gCirc
+    , gEllipse
     , boss
     , cylinder
     , henge
@@ -27,15 +29,38 @@ import DayTime
 
 -- 2D Objects
 
+-- Geometry of a line shape
+-- bx,by -> x y coordnates of the start of the line
+-- ex,ey -> x y coordnates of the end of the line
+-- z     -> plane in which the rect will be visible
+-- srtkW -> thickness of the outline
+-- col   -> color of the stroke
 gLine :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
 gLine (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLine strkW col) (gLinePath strkW)
 
+-- Geometry of a hollow rect shape
+-- bx,by -> x y coordnates of the middle of the rect
+-- ex,ey -> scale of the rect in x and y direction
+-- z     -> plane in which the rect will be visible
+-- srtkW -> thickness of the outline
+-- col   -> color of the stroke
 gRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
 gRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawRect col strkW) (rectPath strkW)
 
+-- Geometry of a filled rect shape
+-- bx,by -> x y coordnates of the middle of the rect
+-- ex,ey -> scale of the rect in x and y direction
+-- z     -> plane in which the rect will be visible
+-- srtkW -> thickness of the outline
+-- col   -> color of the stroke and the fill
 gFullRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
 gFullRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawFullRect col) fullRectPath
 
+gCirc :: P2 -> Diameter -> Z -> Col -> Geometry
+gCirc pos d = gEllipse pos (d,d) 
+
+gEllipse :: P2 -> P2 -> Z -> Col -> Geometry
+gEllipse (bx,by) (ex,ey) z col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawEllipse col) ellipsePath
 
 -- 3D Objects
 
@@ -128,7 +153,12 @@ drawEllipsoide col t dt (_,_,z) | outOf3DRange t z = return ()
         strokeWeight 1
         ellipse (centerOf $ transition t) $ whAt t $ distE t z
 
-
+drawEllipse :: Col -> Transform -> DayTime -> P3 -> Draw
+drawEllipse col t dt (_,_,z) | outOf2DRange t z = return ()
+      | otherwise = do
+        strokeFill $ colorForDayTime col dt
+        strokeWeight 1
+        ellipse (centerOf $ transition t) (centerOf $ scaling t)
 
 drawBoss :: Transform -> DayTime -> P3 -> Draw
 drawBoss t dt (px,py,pz) 
@@ -187,7 +217,7 @@ drawCylinder col scol sw t dt (_,_,z)
     fill $ colorForDayTime col dt
     stroke $ colorForDayTime scol dt
     strokeWeight sw
-    ellipse c (sx/2, sy/2)
+    ellipse c (sx, sy)
     where
         (sx,sy,sz) = scaling t
         c = centerOf $ transition t
@@ -196,11 +226,11 @@ drawHenge :: Transform -> DayTime -> P3 -> Draw
 drawHenge t@(T (x,y,z) r (sx,sy,sz)) dt p@(px,py,_) = do
     drawCylinder col scol sw (T north r (radius,radius,sz)) dt p
     drawCylinder col scol sw (T northeast r (radius,radius,sz)) dt p
-    drawCylinder col scol sw (T east r (radius,radius,sz)) dt p
+    --drawCylinder col scol sw (T east r (radius,radius,sz)) dt p
     drawCylinder col scol sw (T southeast r (radius,radius,sz)) dt p
     drawCylinder col scol sw (T south r (radius,radius,sz)) dt p
     drawCylinder col scol sw (T southwest r (radius,radius,sz)) dt p
-    -- west is the opening
+    drawCylinder col scol sw (T west r (radius,radius,sz)) dt p
     drawCylinder col scol sw (T northwest r (radius,radius,sz)) dt p
     where
         sw = 1
@@ -219,7 +249,7 @@ drawHenge t@(T (x,y,z) r (sx,sy,sz)) dt p@(px,py,_) = do
         southwest = flip tupleAdd z $ (x + left * sqrt2,y + down * sqrt2)
         west = flip tupleAdd z $ (x + left,y)
         northwest = flip tupleAdd z $ (x + left * sqrt2,y + up * sqrt2)
-        radius = sx/12
+        radius = sx/24
         inXrange = x + sx/4 >= px && x - sx/4 <= px 
         inYrange = y + sy/4 >= py && y - sy/4 <= py
         (col,scol) = if inXrange && inYrange then (white,black) else (black,black)
@@ -280,6 +310,21 @@ cylinderPath t z
         (f1,f2) = if sx > sy 
                   then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
                   else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
+
+ellipsePath :: Transform -> Z -> Path
+ellipsePath t z 
+  | outOf2DRange t z = []
+  | otherwise = [p | p <- fullRectPath t z, insideEllipse f1 f2 a p]    
+    where
+        (wx,wy) = centerOf $ scaling t
+        (rx,ry) = (wx/2, wy/2)
+        (cx,cy) = centerOf $ transition t
+        a = if wx > wy then rx else ry
+        focalOffset = if wx > wy then sqrt (rx^2 - ry^2) else sqrt (ry^2 - rx^2)
+        (f1,f2) = if wx > wy 
+                  then ((cx,cy) + (-focalOffset,0), (cx,cy) + (focalOffset,0))
+                  else ((cx,cy) + (0,-focalOffset), (cx,cy) + (0,focalOffset))
+
 
 ellipsoidePath :: Transform -> Z -> Path
 ellipsoidePath t z 

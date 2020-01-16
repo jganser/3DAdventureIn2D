@@ -22,8 +22,8 @@ setup :: Pio State
 setup = do
         size (width, height)
         let st = emptyState
-        let st' = st { objects = level1 }
-        let st'' = st' { actors = level1Actors }
+        let st' = st { objects = allObjects }
+        let st'' = st' { actors = allActors }
         return st''
 
 draw :: State -> Pio ()
@@ -44,26 +44,15 @@ draw st = do
         strokeFill aqua
         strokeWeight 1
         circle playerSize (xy (dotpos st))
-            -- draw hostage, if visible
-        drawFemale femaleStart playerSize playerPos
+
         
         --TODO
         -- Text Test !! 
-        let pText = PText "Hello World!" (100,100) 4 white black
+        let pText = PText "Hello World!" (100,900) 2 white black
         drawPText pText time
 
     where xy (px,py,pz) = (px,py)      
         
-drawFemale p@(x,y,z) size player@(p1,p2,p3) 
-  | p3 /= z = return ()
-  | otherwise = do
-    strokeFill $ rgb 255 192 203 
-    triangle leftUp rightUp bottom
-      where
-        bottom = (x, y - size)
-        ditsUp = ((sqrt 2)/2) * (size)
-        leftUp = (x - ditsUp, y + size)
-        rightUp = (x + ditsUp, y + size)
 
 update :: State -> Pio State
 update st = do    
