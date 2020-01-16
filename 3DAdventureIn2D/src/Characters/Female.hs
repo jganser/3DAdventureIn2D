@@ -2,6 +2,7 @@ module Characters.Female where
 
 import Actor
 import Graphics.Proc
+import Constants
 
 female :: Actor
 female = undefined
@@ -16,3 +17,6 @@ drawFemale p@(x,y,z) size player@(p1,p2,p3)
         ditsUp = ((sqrt 2)/2) * (size)
         leftUp = (x - ditsUp, y + size)
         rightUp = (x + ditsUp, y + size)
+
+goToMonster :: Actor -> Actor
+goToMonster = newTick $ moveToAndIdle bossStart 3

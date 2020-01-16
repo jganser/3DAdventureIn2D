@@ -49,7 +49,7 @@ threeDs = [
   , cylinder (T (105,100,0) (0,0,0) (30,30,25)) olive 1 -- first round cylindric hud after main platform left
   , cylinder (T (80,100,0) (0,0,0) (30,30,30)) seaGreen 1 -- second round cylindric hud after main platform left
   , henge (T hengePos (100,600,0) (200,200,100))
-  , fullCube (T (180,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform 
+  , fullCube (T (240,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform
   ]
 
 level2 :: Level
@@ -74,7 +74,7 @@ platforms = [
 townfolk = [
   -- guards       -- blue with grey border
   -- female       -- corale
-  --female
+  --, female
   -- old lady     -- deep purple
   -- old man      -- crimson
   -- town people  -- yellow
