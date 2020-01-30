@@ -41,10 +41,15 @@ moveTo finishedTick target speed a = a {geo = newGeo, tick = newTick}
               then finishedTick
               else moveTo finishedTick target speed
 
+talk :: Actor -> (Maybe String, Actor)
+talk a | not (finishedTalking a) = 
+  if tail (textToSay a) == [] 
+  then (Just (head (textToSay a)), a {textToSay = [], finishedTalking = True})
+  else (Nothing, a)
 
 moveToAndIdle :: P3 -> Float -> Actor -> Actor
 moveToAndIdle = moveTo idle
 
 instance Drawable Actor where
     drawAt daytime playerPos a = drawAt daytime playerPos (geo a)
-    path z a = path z (geo a)
+    path z a = if blocksPlayer a then [] else path z (geo a)

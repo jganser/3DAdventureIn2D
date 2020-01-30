@@ -77,8 +77,12 @@ townfolk = [
   --, female
   -- old lady     -- deep purple
   -- old man      -- crimson
-  -- town people  -- yellow
   -- shaman       -- white with purple border
+  ]
+
+normalTownFolkPos :: [P3]
+normalTownFolkPos = [
+  --todo
   ]
 
 allActors = [

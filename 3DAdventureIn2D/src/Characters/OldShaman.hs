@@ -27,7 +27,7 @@ tick = undefined
 
 firstDialog :: [String]
 firstDialog = [
-  " ???      : Ohmmm...          Ohmmm..."
+    " ???      : Ohmmm...          Ohmmm..."
   , "Hero      : What are you doing here?"
   , " ???      : I am meditating young friend."
   , " ???      : Letting go of the flat world to expand the view."

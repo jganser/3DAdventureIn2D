@@ -9,11 +9,13 @@ import Constants
 import DayTime
 
 lastLift :: Actor
-lastLift = A (fullCube (T lastLiftUp (0,0,0) (50,30,5)) green) idle True False False []
+lastLift = A (fullCube (T lastLiftUp (0,0,0) (50,30,5)) green) idle True False False [] False
 
 sendUp :: Actor -> Actor
-sendUp a = a { tick = moveTo lastLiftUp 1}
+sendUp = sendTo lastLiftUp
 
 sendDown :: Actor -> Actor
-sendDown a = a { tick = moveTo lastLiftDown 1}
+sendDown = sendTo lastLiftDown
 
+sendTo :: P3 -> Actor -> Actor
+sendTo target a = a { tick = moveTo idle target 1}

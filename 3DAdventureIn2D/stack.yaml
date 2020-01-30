@@ -43,6 +43,7 @@ extra-deps:
 - hsnoise-0.0.2
 - processing-for-haskell-0.1.0.1
 - extra-1.6.18
+- random-1.1
 #- xeno-0.3.4
 # Override default flag values for local packages and extra-deps
 # flags: {}

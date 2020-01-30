@@ -14,6 +14,7 @@ import qualified CharacterSet as CS
 import DayTime
 import Data.List (union)
 import Prelude hiding (lines)
+import Characters.Townpeople
 
 
 main = runProc $ def { procSetup = setup, procDraw = draw, procUpdate = update, procKeyPressed = movement }
@@ -23,7 +24,8 @@ setup = do
         size (width, height)
         let st = emptyState
         let st' = st { objects = allObjects }
-        let st'' = st' { actors = allActors }
+        normaltownfolk <- createAllTownPeople normalTownFolkPos
+        let st'' = st' { actors = allActors ++ normaltownfolk}
         return st''
 
 draw :: State -> Pio ()
