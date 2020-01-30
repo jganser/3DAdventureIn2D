@@ -87,9 +87,15 @@ henge t = Geo t drawHenge hengePath
 boss :: Transform -> Actor
 boss t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text
 
-
-movingActor :: P3 -> P3 -> Float -> Geometry -> Actor
-movingActor start end speed geo = A geo (moveBetweenWithSpeed start end speed) True False False [] False
+-- An Actor that moves between two points and idles for a set amount of secs
+-- between these movements
+-- @start starting positon
+-- @end   ending position
+-- @speed speed of the movement
+-- @geo   Geometry that is moving
+-- @x     seconds to idle after reaching start or end point
+movingActor :: P3 -> P3 -> Float -> Geometry -> Float-> Actor
+movingActor start end speed geo  x = A geo (moveBetweenAndIdleFor x start end speed) True False False [] False
 
 
 -- Draw functions
@@ -367,32 +373,6 @@ hengePath = const $ const []
 
 
 -- Ticks
-bossTick a = a --Constant Tick
-
-moveBetweenWithSpeed :: P3 -> P3 -> Float -> Actor -> Actor
-moveBetweenWithSpeed start end speed a = setToStart
-    where
-        (T loc r s) = transform $ geo a
-        geometry = geo a
-        setToStart = a { geo =  startGeo, tick = Objects.moveTo False start end speed}
-            
-        startTransform = (T start r s)
-        startGeo = geometry { transform = startTransform }
-
-moveTo :: Bool -> P3 -> P3 -> Float -> Actor -> Actor
-moveTo goalIsStart start end speed a = a { geo = newGeo, tick = newTick }
-    where
-        goal = if goalIsStart then start else end
-        (T loc r s) = transform $ geo a
-        geometry = geo a
-        direction@(dx,dy,dz) = norm3 $ goal - loc 
-        newPos@(npx,npy,npz) = loc + direction * (speed,speed,speed)
-        newDirection@(ndx,ndy,ndz) = norm3 $ goal - newPos
-        beyondGoal = (dx * ndx + dy * ndy + dz * ndz) < 0
-        newTransform = if beyondGoal then T goal r s else T newPos r s
-        newGeo = geometry { transform = newTransform }
-        newTick = if beyondGoal 
-                  then Objects.moveTo (not goalIsStart) start end speed 
-                  else Objects.moveTo goalIsStart start end speed
+bossTick = idle --Constant Tick
 
 

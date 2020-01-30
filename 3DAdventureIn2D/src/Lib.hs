@@ -17,7 +17,7 @@ import Prelude hiding (lines)
 import Characters.Townpeople
 
 
-main = runProc $ def { procSetup = setup, procDraw = draw, procUpdate = update, procKeyPressed = movement }
+main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = update, procKeyPressed = movement }
 
 setup :: Pio State
 setup = do
@@ -56,9 +56,9 @@ draw st = do
     where xy (px,py,pz) = (px,py)      
         
 
-update :: State -> Pio State
-update st = do    
-    let updatedActors = map (\a -> (tick a) a) $ actors st
+update :: TimeInterval -> State -> Pio State
+update deltaT st = do    
+    let updatedActors = map (\a -> (tick a) deltaT a) $ actors st
     return $ st { actors = updatedActors }
 
 

@@ -22,8 +22,8 @@ drawShaman daytime playerPos a
     strokeWeight 1
     ellipse (centerOf $ aPos a) (playerSize, playerSize)
 
-tick :: Actor -> Actor
-tick = undefined
+tick :: Tick
+tick = idle
 
 firstDialog :: [String]
 firstDialog = [
