@@ -63,12 +63,21 @@ threeDs = [
   , henge (T hengePos (0,0,0) (200,200,100))
   , fullCube (T (240,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform
   , fullCube (T (640,600,10) (0,0,0) (50,40,36)) seaGreen -- cube at the bottom right
+  , ellipsoide (T (400,100,10) (0,0,0) (40,40,6)) seaGreen -- sphere
   ]
 
 level2 :: Level
 level2 = [
-      gLine ( 50, 50) (200,100) 10 20 yellow
-    , gLine (150,150) (300,200) 10  4 lime
+    --  gLine ( 50, 50) (200,100) 10 20 yellow
+    --, gLine (150,150) (300,200) 10  4 lime
+    --lines 
+      gLine (255,230) (400,230) 0 8 darkSaddleBrown -- street to the right from  mainplatform
+    , gLine (400,230) (400,120) 0 4 darkSaddleBrown -- street up
+    , gLine (380,100) (260,100) 0 4 darkSaddleBrown -- street left form ellipsoide
+    , gLine (120,100) (180,100) 0 4 darkSaddleBrown -- street to the huds
+    , gLine ( 80,115) (80,200) 0 4 darkSaddleBrown -- street to old Shaman hud
+    -- 2d objects
+    , gCirc (80,250) 100 10 darkSlateGray -- old shaman hud
     ]
 
 level3 :: Level
@@ -83,6 +92,7 @@ platforms = [
     lastLift
   , movingActor hengePlatformStart hengePlatformEnd platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 3 -- platform to henge
   , movingActor plazaPlatformStart plazaPlatformEnd platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 5 -- main platform
+  , hengeLift
   --, 
   ]
 

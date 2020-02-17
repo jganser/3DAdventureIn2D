@@ -22,8 +22,20 @@ bossStart = (900,300,0)
 hengePos :: (Float,Float,Float)
 hengePos = (100,600,0)
 
+hengeLiftSize :: (Float,Float,Float)
+hengeLiftSize = (25,25,5)
+
+hengeLiftLow :: (Float,Float,Float)
+hengeLiftLow = hengePos
+
+hengeLiftUp :: (Float,Float,Float)
+hengeLiftUp = (100,600,10)
+
 bossSize :: Float
 bossSize = 70
+
+lastLiftSize :: (Float,Float,Float)
+lastLiftSize = (50,30,5)
 
 lastLiftUp :: (Float,Float,Float)
 lastLiftUp = (820,300,20)
