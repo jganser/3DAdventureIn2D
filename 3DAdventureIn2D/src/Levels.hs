@@ -24,8 +24,8 @@ level1 = [
     --cylinder (T (250,250,250) (0,0,0) (100,100,100)) olive 1,
     --henge (T hengePos (0,0,0) (200,200,200)),
     --lines 
-      gLine ( 80,300) (865,300) 0 8 darkSaddleBrown -- main street to boss
-    , gLine (100,300) (100,320)  0 4 darkSaddleBrown -- street to the house of the hero    
+      gLine ( 80,300) (860,300) 0 8 darkSaddleBrown -- main street to boss
+    , gLine (100,300) (100,320) 0 4 darkSaddleBrown -- street to the house of the hero    
     , gLine (160,150) (160,100) 0 4 darkSaddleBrown -- street behind main platform
     , gLine (120,100) (180,100) 0 4 darkSaddleBrown -- T Street after main platform
     , gLine (260,100) (360,100) 0 4 darkSaddleBrown -- Street to forum
@@ -33,6 +33,14 @@ level1 = [
     , gLine (460,70) (460,95) 0 3 firebrick -- bridge to plaza on Forum -> up
     , gLine (460,145) (460,170) 0 3 firebrick -- bridge to plaza on Forum -> down
     , gLine (485,120) (510,120) 0 3 firebrick -- bridge to plaza on Forum -> right
+    , gLine (460,300) (460,600) 0 4 darkSaddleBrown -- street down leading to henge
+    , gLine (400,600) (460,600) 0 4 darkSaddleBrown -- street to the left leading to henge
+    , gLine (120,600) (200,600) 0 4 darkSaddleBrown -- street left leading onto the henge lift
+    , gLine (540,460) (640,460) 0 4 darkSaddleBrown -- street behind shaman hud
+    , gLine (640,460) (640,580) 0 4 darkSaddleBrown -- street down behind shaman hud
+    , gLine (640,500) (780,500) 0 4 darkSaddleBrown -- street to the house under the boss
+    , gLine (580,600) (615,600) 0 4 darkSaddleBrown -- street at the right low left
+    , gLine (665,600) (700,600) 0 4 darkSaddleBrown -- street at the right low right
     -- 2D Objects
     , gFullRect (100,340) (40,40) 0 1 firebrick -- house of the hero
     , gFullRect (385,120) (50,200) 0 1 royalBlue -- Forum part => left
@@ -41,6 +49,10 @@ level1 = [
     , gFullRect (535,120) (50,200) 0 1 royalBlue -- Form part  => right
     , gCirc (460,120) 50 0 gold -- Forum Plaza
     , gEllipse (40,100) (60,120) 0 cadetBlue -- upper left hud
+    , gCirc (500, 460) 80 0 firebrick -- house of the shaman
+    , gFullRect (840,520) (80,60) 0 1 firebrick -- fullrect under boss
+    , gCirc (570,600) 20 0 cadetBlue -- low left hud
+    , gEllipse (730,600) (60,40) 0 cadetBlue -- upper left hud
     ]
     
 threeDs :: Level
@@ -48,8 +60,9 @@ threeDs = [
     fullCube (T (220,100,0) (0,0,0) (80,  40, 22)) goldenRod -- house after main platform in dircetion of forum
   , cylinder (T (105,100,0) (0,0,0) (30,30,25)) olive 1 -- first round cylindric hud after main platform left
   , cylinder (T (80,100,0) (0,0,0) (30,30,30)) seaGreen 1 -- second round cylindric hud after main platform left
-  , henge (T hengePos (100,600,0) (200,200,100))
+  , henge (T hengePos (0,0,0) (200,200,100))
   , fullCube (T (240,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform
+  , fullCube (T (640,600,10) (0,0,0) (50,40,36)) seaGreen -- cube at the bottom right
   ]
 
 level2 :: Level
@@ -67,8 +80,10 @@ bs@(bx,by,bz) = bossStart
 allObjects = level1 ++ level2 ++ level3 ++ threeDs
 
 platforms = [
-  lastLift
-  -- , movingActor (0,0,0) (400,400,0) 1 $ fullCube (T (300,275,50) (0,0,0) (75,50,10)) green
+    lastLift
+  , movingActor hengePlatformStart hengePlatformEnd platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 3 -- platform to henge
+  , movingActor plazaPlatformStart plazaPlatformEnd platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 5 -- main platform
+  --, 
   ]
 
 townfolk = [

@@ -37,7 +37,7 @@ moveTo finishedTick target speed deltaT a = a {geo = newGeo, tick = newTick}
     pos = aPos a
     dir@(dx,dy,dz) = norm3 $ target - pos
     v = speed * deltaT
-    newPos = pos + dir * (v,v,v)
+    newPos = pos + dir * (v,v,v/5)
     newDir@(ndx,ndy,ndz) = norm3 $ target - newPos
     beyondGoal = (dx * ndx + dy * ndy + dz * ndz) < 0
     newGeo = if beyondGoal then newGeoPos target (geo a) else newGeoPos newPos (geo a)

@@ -18,4 +18,5 @@ sendDown :: Actor -> Actor
 sendDown = sendTo lastLiftDown
 
 sendTo :: P3 -> Actor -> Actor
-sendTo target a = a { tick = moveTo idle target 1}
+sendTo target a = a { tick = moveTo idle target liftSpeed}
+

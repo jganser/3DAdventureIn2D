@@ -95,7 +95,7 @@ boss t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] True --TO
 -- @geo   Geometry that is moving
 -- @x     seconds to idle after reaching start or end point
 movingActor :: P3 -> P3 -> Float -> Geometry -> Float-> Actor
-movingActor start end speed geo  x = A geo (moveBetweenAndIdleFor x start end speed) True False False [] False
+movingActor start end speed geo x = A geo (moveBetweenAndIdleFor x start end speed) True False False [] False
 
 
 -- Draw functions
