@@ -31,3 +31,5 @@ lastLiftUp = (820,300,20)
 lastLiftDown :: (Float,Float,Float)
 lastLiftDown = (520,300,10)
 
+layers :: [Float]
+layers = [0,10,20]

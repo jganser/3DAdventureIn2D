@@ -4,6 +4,8 @@ import Drawable
 import Geometry
 import ObjectUtils
 import Graphics.Proc (P3)
+
+
 type Tick = Float -> Actor -> Actor
 
 data Actor = A {
