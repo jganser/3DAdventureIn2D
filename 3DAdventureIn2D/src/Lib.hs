@@ -63,6 +63,7 @@ draw st = do
 update :: TimeInterval -> State -> Pio State
 update deltaT st = do    
     let updatedActors = map (\a -> (tick a) deltaT a) $ movingActors st
+    -- liftIO $ putStrLn $ "updating with deltaT: " ++ show deltaT -- debugline
     return $ st { movingActors = updatedActors }
 
 

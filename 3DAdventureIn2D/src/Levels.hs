@@ -105,9 +105,9 @@ bs@(bx,by,bz) = bossStart
 allObjects = level1 ++ level2 ++ level3 ++ threeDs
 
 platforms = [    
-    movingActor [hengePlatformStart, hengePlatformEnd] platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 3 -- platform to henge
-  , movingActor [plazaPlatformStart, plazaPlatformEnd] platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 5 -- main platform
-  , movingActor [(100,205,20), (80,50,24), (220,30,16), (200,225,20)] platformSpeed (ellipsoide (T (100,205,20) (0,0,0) (20,40,4)) seaGreen) 2 -- 3rd level round trip platform
+    movingActor [hengePlatformStart, hengePlatformEnd] platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 2 -- platform to henge
+  , movingActor [plazaPlatformStart, plazaPlatformEnd] platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 3 -- main platform
+  , movingActor [(100,205,20), (80,50,24), (220,30,16), (200,225,20)] platformSpeed (ellipsoide (T (100,205,20) (0,0,0) (20,40,4)) seaGreen) 1 -- 3rd level round trip platform
   ]
 
 lifts = [

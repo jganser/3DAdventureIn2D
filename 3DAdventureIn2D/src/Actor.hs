@@ -39,7 +39,7 @@ moveTo finishedTick target speed deltaT a = a {geo = newGeo, tick = newTick}
     v = speed * deltaT
     newPos = pos + dir * (v,v,v/5)
     newDir@(ndx,ndy,ndz) = norm3 $ target - newPos
-    beyondGoal = (dx * ndx + dy * ndy + dz * ndz) < 0
+    beyondGoal = (dx * ndx + dy * ndy + dz * ndz) <= 0
     newGeo = if beyondGoal then newGeoPos target (geo a) else newGeoPos newPos (geo a)
     newTick = if beyondGoal 
               then finishedTick
@@ -65,7 +65,7 @@ idleFor x nextTick deltaT a = a { tick = newTick}
 moveBetweenAndIdleFor :: Float -> [P3] -> Float -> Tick
 moveBetweenAndIdleFor x points speed = idleFor x $ moveToNext points
   where
-    moveToNext points = moveTo (idleFor x (moveToNext newOrder)) (head points) speed
+    moveToNext points = moveTo (idleFor x (moveToNext newOrder)) (head newOrder) speed
       where
         newOrder = tail points ++ [head points]
     
