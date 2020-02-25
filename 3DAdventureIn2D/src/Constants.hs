@@ -35,7 +35,7 @@ bossSize :: Float
 bossSize = 70
 
 lastLiftSize :: (Float,Float,Float)
-lastLiftSize = (50,30,5)
+lastLiftSize = (60,30,3)
 
 lastLiftUp :: (Float,Float,Float)
 lastLiftUp = (820,300,20)

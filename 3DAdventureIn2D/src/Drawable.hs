@@ -2,6 +2,7 @@ module Drawable where
 
 import Graphics.Proc
 import DayTime
+import Data.Vector
 
 class Drawable a where
     drawAt :: DayTime -> P3 -> a -> Draw
@@ -9,3 +10,4 @@ class Drawable a where
 
 type Path = [Field]
 type Field = P2
+type Layer = Vector (Vector Bool)

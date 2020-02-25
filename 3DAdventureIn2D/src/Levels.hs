@@ -64,6 +64,7 @@ threeDs = [
   , fullCube (T (240,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform
   , fullCube (T (640,600,10) (0,0,0) (50,40,36)) seaGreen -- cube at the bottom right
   , ellipsoide (T (400,100,10) (0,0,0) (40,40,6)) seaGreen -- sphere
+  , cube (T (300,510,18) (0,0,0) (300,8,6)) 8 paleGoldenRod -- open cube in 3rd level, that shall be visible whle going up
   ]
 
 level2 :: Level
@@ -71,29 +72,47 @@ level2 = [
     --  gLine ( 50, 50) (200,100) 10 20 yellow
     --, gLine (150,150) (300,200) 10  4 lime
     --lines 
-      gLine (255,230) (400,230) 0 8 darkSaddleBrown -- street to the right from  mainplatform
-    , gLine (400,230) (400,120) 0 4 darkSaddleBrown -- street up
-    , gLine (380,100) (260,100) 0 4 darkSaddleBrown -- street left form ellipsoide
-    , gLine (120,100) (180,100) 0 4 darkSaddleBrown -- street to the huds
-    , gLine ( 80,115) (80,200) 0 4 darkSaddleBrown -- street to old Shaman hud
+      gLine (255,230) (400,230) 10 8 darkSaddleBrown -- street to the right from  mainplatform
+    , gLine (400,230) (400,120) 10 4 darkSaddleBrown -- street up
+    , gLine (380,100) (260,100) 10 4 darkSaddleBrown -- street left form ellipsoide
+    , gLine (120,100) (180,100) 10 4 darkSaddleBrown -- street to the huds
+    , gLine ( 80,115) (80,200) 10 4 darkSaddleBrown -- street to old Shaman hud
     -- 2d objects
     , gCirc (80,250) 100 10 darkSlateGray -- old shaman hud
     ]
 
 level3 :: Level
-level3 = []
+level3 = [
+    gLine (450,570) (450,520) 20 6 sienna
+  , gLine (50,500) (150,500) 20 6 sienna
+  , gLine (50,500) (50,350) 20 4 sienna
+  , gLine (50,250) (100,220) 20 8 sienna
+  , gLine (200,220) (240,240) 20 6 seaGreen
+  , gLine (300,260) (305,320) 20 6 seaGreen
+  , gLine (305,320) (335,315) 20 6 seaGreen
+  , gLine (335,315) (330,290) 20 6 seaGreen
+  , gLine (332,290) (790,280) 20 6 seaGreen
+  , gLine (848,300) (905,300) 20 3 seaGreen
+  -- 2d objects
+  , gEllipse (450, 600) (100,60) 20 saddleBrown
+  , gEllipse (50, 300) (20,100) 20 paleGoldenRod
+  , gFullRect (280,250) (40,20) 20 1 seaGreen 
+  ]
 
 ps@(px,py,pz) = playerStart
 bs@(bx,by,bz) = bossStart
 
 allObjects = level1 ++ level2 ++ level3 ++ threeDs
 
-platforms = [
-    lastLift
-  , movingActor hengePlatformStart hengePlatformEnd platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 3 -- platform to henge
-  , movingActor plazaPlatformStart plazaPlatformEnd platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 5 -- main platform
-  , hengeLift
-  --, 
+platforms = [    
+    movingActor [hengePlatformStart, hengePlatformEnd] platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 3 -- platform to henge
+  , movingActor [plazaPlatformStart, plazaPlatformEnd] platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 5 -- main platform
+  , movingActor [(100,205,20), (80,50,24), (220,30,16), (200,225,20)] platformSpeed (ellipsoide (T (100,205,20) (0,0,0) (20,40,4)) seaGreen) 2 -- 3rd level round trip platform
+  ]
+
+lifts = [
+    ("lastLift", lastLift)
+  , ("hengeLift", hengeLift)
   ]
 
 townfolk = [
@@ -110,9 +129,5 @@ normalTownFolkPos = [
   --todo
   ]
 
-allActors = [
-  --boss
-    boss (T bs (0,0,0) (bossSize,bossSize,bossSize))
-  -- oldShaman    -- azure with purple border
-  --, oldShaman
-  ] ++ platforms ++ townfolk
+bossActor = ("boss", boss (T bs (0,0,0) (bossSize,bossSize,bossSize)))
+ 

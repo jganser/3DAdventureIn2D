@@ -44,6 +44,7 @@ extra-deps:
 - processing-for-haskell-0.1.0.1
 - extra-1.6.18
 - random-1.1
+- vector-0.12.1.2
 #- xeno-0.3.4
 # Override default flag values for local packages and extra-deps
 # flags: {}

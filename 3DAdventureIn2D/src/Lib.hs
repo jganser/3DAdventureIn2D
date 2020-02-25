@@ -15,6 +15,8 @@ import DayTime
 import Data.List (union)
 import Prelude hiding (lines)
 import Characters.Townpeople
+import Player
+import qualified Data.Vector as V
 
 
 main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = update, procKeyPressed = movement }
@@ -23,17 +25,19 @@ setup :: Pio State
 setup = do
         size (width, height)
         let st = emptyState
-        let st' = st { objects = allObjects }
+        let st' = foldl (\state obj -> addObject obj state) st allObjects
         normaltownfolk <- createAllTownPeople normalTownFolkPos
-        let st'' = st' { actors = allActors ++ normaltownfolk}
-        return st''
+        let st'' = st' { eventActors = bossActor : townfolk ++ lifts}        
+        let st_3 = st'' { movingActors = platforms, staticActors = normaltownfolk }
+        let st_4 = reduceLayerByBlockingStaticActors st_3
+        return st_4
 
 draw :: State -> Pio ()
 draw st = do     
         -- provide easy access for pure values
         let time = daytime st        
         let geos = objects st
-        let acts = actors st 
+        let sActs = staticActors st 
         let playerPos = dotpos st
         -- draw the scene
             -- draw the background for the current daytime
@@ -41,11 +45,11 @@ draw st = do
             -- draw simple gemoetries if they are visible, with regards to daytime
         mapM_ (drawAt time playerPos) geos
             -- draw actors if they are visible, with regards to daytime
-        mapM_ (drawAt time playerPos) acts
+        mapM_ (drawAt time playerPos) sActs
+        mapM_ (drawAt time playerPos) $ movingActors st
+        mapM_ (drawAt time playerPos) $ map snd $ eventActors st
             -- draw the player, regardless of daytime 
-        strokeFill aqua
-        strokeWeight 1
-        circle playerSize (xy (dotpos st))
+        drawP (player st) playerPos
 
         
         --TODO
@@ -58,8 +62,8 @@ draw st = do
 
 update :: TimeInterval -> State -> Pio State
 update deltaT st = do    
-    let updatedActors = map (\a -> (tick a) deltaT a) $ actors st
-    return $ st { actors = updatedActors }
+    let updatedActors = map (\a -> (tick a) deltaT a) $ movingActors st
+    return $ st { movingActors = updatedActors }
 
 
 bgForDayTime :: DayTime -> Pio ()
@@ -83,10 +87,11 @@ movement st = do
         _ -> return st
 
         where
-            (_,_,z) = dotpos st
-            onPath st p = if elem (p1,p2) allPath then p else dotpos st
-                where
-                    (p1,p2,_) = p
-            allObjectPath = foldr (\o ps -> ((++ ps) . path z) o) [] $ objects st
-            allActorPath = foldr (\a ps -> ((++ ps) . path z) a) [] $ actors st
-            allPath = (++) allObjectPath allActorPath
+          onPath st p@(p1,p2,z) = if (reduceByBlockers V.! round p1) V.! round p2 then p else dotpos st
+            where 
+              curLayer = staticPathAt z $ staticPath st 
+              allActorPath = foldr (\a ps -> ((++ ps) . path z) a) [] 
+              curLayerPlusMovers = updateLayer curLayer True $ allActorPath $ movingActors st
+              addEventActors = updateLayer curLayer True $ allActorPath $ filter (not . blocksPlayer) $ map snd $ eventActors st
+              reduceByBlockers = updateLayer curLayer False $ allActorPath $ filter (blocksPlayer) $ map snd $ eventActors st
+            

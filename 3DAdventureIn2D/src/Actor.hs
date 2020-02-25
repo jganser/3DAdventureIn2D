@@ -62,11 +62,13 @@ idleFor x nextTick deltaT a = a { tick = newTick}
     newTick = if x - deltaT < 0 then nextTick else idleFor (x-deltaT) nextTick
 
 -- idleFor x seconds at the end of each movement
-moveBetweenAndIdleFor :: Float -> P3 -> P3 -> Float -> Tick
-moveBetweenAndIdleFor x start end speed = idleFor x moveToEnd
+moveBetweenAndIdleFor :: Float -> [P3] -> Float -> Tick
+moveBetweenAndIdleFor x points speed = idleFor x $ moveToNext points
   where
-    moveToEnd = moveTo (idleFor x moveToStart) end speed
-    moveToStart = moveTo (idleFor x moveToEnd) start speed
+    moveToNext points = moveTo (idleFor x (moveToNext newOrder)) (head points) speed
+      where
+        newOrder = tail points ++ [head points]
+    
 
 
 instance Drawable Actor where

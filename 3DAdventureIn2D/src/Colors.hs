@@ -43,5 +43,11 @@ saddleBrown = crgb (139,69,19)
 darkSaddleBrown :: Col
 darkSaddleBrown = crgb (70,30,10)
 
+sienna :: Col
+sienna = crgb (160,82,45)
+
 azure :: Col
 azure = crgb (240,255,255)
+
+ghostWhite :: Col
+ghostWhite = crgb (248,248,255)
