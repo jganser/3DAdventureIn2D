@@ -45,6 +45,7 @@ extra-deps:
 - extra-1.6.18
 - random-1.1
 - vector-0.12.1.2
+- GLUT-2.7.0.10
 #- xeno-0.3.4
 # Override default flag values for local packages and extra-deps
 # flags: {}

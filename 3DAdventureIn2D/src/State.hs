@@ -13,7 +13,25 @@ import qualified Data.Vector as V
 
 
 
-data GameState = Running | GameOver | GameWon
+data GameState = Running EventState | GameOver | GameWon deriving (Eq, Ord, Show)
+
+data EventState = ES {
+    prolog :: Bool,                         --   1
+    oldManInfo :: Bool,                     --   2
+    hasFlowers :: Bool,                     --   3
+    shamanMovedAside :: Bool,               --   4
+    oldShamanPartOne :: Bool,               --   5
+    oldShamanOnPlatform :: Bool,            --   6
+    oldShamanOnPlatformAtTop :: Bool,       --   7
+    oldShamanOverMonster :: Bool,           --   8
+    playerInMonster :: Bool,                --   9
+    playerAndFemaleOutOfMonster :: Bool,    --  10
+    epilog :: Bool                          --  11
+} deriving (Eq, Ord, Show)
+
+
+--                   1     2    3     4      5    6     7      8    9     10    11
+newEventState = ES False False False False False False False False False False False
 
 -- the actors shall be disjoint distributed over the 3 actor lists (unique occurence)
 data State = ST {
@@ -31,7 +49,7 @@ data State = ST {
 -- time step
 data StaticPath = SP Layer Layer Layer
 
-emptyState = ST (newPlayer playerStart) [] [] [] [] Running Day (SP emptyLayer emptyLayer emptyLayer)
+emptyState = ST (newPlayer playerStart) [] [] [] [] (Running newEventState) Day (SP emptyLayer emptyLayer emptyLayer)
 emptyLayer = V.replicate (round width) (V.replicate (round height) False)
 
 
@@ -57,12 +75,6 @@ staticPathAt z (SP zero ten twenty) = case z of
     10 -> ten
     20 -> twenty
     _ -> emptyLayer
-
-updateLayer :: Layer -> Bool -> Path -> Layer
-updateLayer l add path =  V.accum (\v t -> v V.// t) l p
-  where
-    p :: [(Int,[(Int,Bool)])]
-    p = Prelude.map (\(x,y) -> (round x,[(round y,add)])) path
 
 reduceLayerByBlockingStaticActors :: State -> State
 reduceLayerByBlockingStaticActors st = reduceLayerByBlockers (staticActors st) st

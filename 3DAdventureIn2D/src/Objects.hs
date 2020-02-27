@@ -82,21 +82,6 @@ ellipsoide t col = Geo t (drawEllipsoide col) ellipsoidePath
 henge :: Transform -> Geometry
 henge t = Geo t drawHenge hengePath
 
--- Actors
-
-boss :: Transform -> Actor
-boss t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text
-
--- An Actor that moves between two points and idles for a set amount of secs
--- between these movements
--- @points list of stations for this actor
--- @speed speed of the movement
--- @geo   Geometry that is moving
--- @x     seconds to idle after reaching start or end point
-movingActor :: [P3] -> Float -> Geometry -> Float-> Actor
-movingActor points speed geo x = A geo (moveBetweenAndIdleFor x points speed) True False False [] False
-
-
 -- Draw functions
 drawRect :: Col -> StrokeWeight -> Transform -> DayTime -> P3 -> Draw
 drawRect = drawRectInRange outOf2DRange
@@ -374,4 +359,5 @@ hengePath = const $ const []
 -- Ticks
 bossTick = idle --Constant Tick
 
-
+boss :: Transform -> Actor
+boss t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text

@@ -9,9 +9,11 @@ height = 1060.0
 
 playerStart :: (Float,Float,Float)
 playerStart = (100,330,0)
+--playerStart = hengePos
+--playerStart = lastLiftUp
 
 playerSize :: Float
-playerSize = 5
+playerSize = 10
 
 femaleStart :: (Float,Float,Float)
 femaleStart = (100,300,0)
@@ -23,16 +25,16 @@ hengePos :: (Float,Float,Float)
 hengePos = (100,600,0)
 
 hengeLiftSize :: (Float,Float,Float)
-hengeLiftSize = (25,25,5)
+hengeLiftSize = (26,26,6)
 
 hengeLiftLow :: (Float,Float,Float)
 hengeLiftLow = hengePos
 
 hengeLiftUp :: (Float,Float,Float)
-hengeLiftUp = (100,600,10)
+hengeLiftUp = (100,600,20)
 
-bossSize :: Float
-bossSize = 70
+bossSize :: (Float,Float,Float)
+bossSize = (70,70,6)
 
 lastLiftSize :: (Float,Float,Float)
 lastLiftSize = (60,30,3)
@@ -41,13 +43,13 @@ lastLiftUp :: (Float,Float,Float)
 lastLiftUp = (820,300,20)
 
 lastLiftDown :: (Float,Float,Float)
-lastLiftDown = (520,300,10)
+lastLiftDown = (255,300,10)
 
 layers :: [Float]
 layers = [0,10,20]
 
 hengePlatformSize :: (Float,Float,Float)
-hengePlatformSize = (30,10,30)
+hengePlatformSize = (30,20,30)
 
 hengePlatformStart :: (Float,Float,Float)
 hengePlatformStart = (385,600,10)
@@ -56,10 +58,10 @@ hengePlatformEnd :: (Float,Float,Float)
 hengePlatformEnd = (215,600,10)
 
 platformSpeed :: Float
-platformSpeed = 50
+platformSpeed = 100
 
 plazaPlatformSize :: (Float,Float,Float)
-plazaPlatformSize = (30,40,12)
+plazaPlatformSize = (36,40,12)
 
 plazaPlatformStart :: (Float,Float,Float)
 plazaPlatformStart = (240,230,6)
@@ -68,4 +70,4 @@ plazaPlatformEnd :: (Float,Float,Float)
 plazaPlatformEnd = (160,170,6)
 
 liftSpeed :: Float
-liftSpeed = 30
+liftSpeed = 40

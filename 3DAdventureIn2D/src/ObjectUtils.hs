@@ -76,3 +76,12 @@ lineDistance (bx,by) (ex,ey) (px,py) =
         esx = if bx < ex then ex  else bx 
         bsy = if by < ey then by  else ey 
         esy = if by < ey then ey  else by 
+
+mapP3 :: (Float -> Float) -> P3 -> P3
+mapP3 f (x,y,z) = (f x, f y, f z)
+
+roundP3 :: P3 -> P3
+roundP3 = mapP3 (fromInteger . round) 
+
+roundXY :: P3 -> P3
+roundXY (x,y,z) = let f = fromInteger . round in (f x, f y, z)
