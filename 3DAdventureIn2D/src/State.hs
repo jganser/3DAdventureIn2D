@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module State where
 
 import Objects
@@ -10,48 +12,52 @@ import DayTime
 import Player
 import Graphics.Proc
 import qualified Data.Vector as V
+import GameState as GS
 
-
-
-data GameState = Running EventState | GameOver | GameWon deriving (Eq, Ord, Show)
-
-data EventState = ES {
-    prolog :: Bool,                         --   1
-    oldManInfo :: Bool,                     --   2
-    hasFlowers :: Bool,                     --   3
-    shamanMovedAside :: Bool,               --   4
-    oldShamanPartOne :: Bool,               --   5
-    oldShamanOnPlatform :: Bool,            --   6
-    oldShamanOnPlatformAtTop :: Bool,       --   7
-    oldShamanOverMonster :: Bool,           --   8
-    playerInMonster :: Bool,                --   9
-    playerAndFemaleOutOfMonster :: Bool,    --  10
-    epilog :: Bool                          --  11
-} deriving (Eq, Ord, Show)
-
-
---                   1     2    3     4      5    6     7      8    9     10    11
-newEventState = ES False False False False False False False False False False False
 
 -- the actors shall be disjoint distributed over the 3 actor lists (unique occurence)
 data State = ST {
     player :: Player, 
     objects :: [Geometry],
     staticActors :: [Actor], -- static actors can be used to make the path function faster
-    movingActors :: [Actor], -- may be able to influence the player position
-    eventActors :: [(String, Actor)], -- this list has a name to actor reference included to enable situational updates
     gameState :: GameState,
     daytime :: DayTime,
-    staticPath :: StaticPath    
+    staticPath :: StaticPath,
+    eventActors :: EventActors
 }
+
+eventActorList :: State -> [(String, Actor)] -- this list has a name to actor reference included to enable situational updates
+eventActorList = (asList . eventActors)
+
+instance EventHolder State where
+  eventState = eventState . gameState
+  isEventSensitive = isEventSensitive . gameState
+  updateEventState st es = st { gameState = (updateEventState (gameState st) es)}
+  
+instance Tickable State where
+  tick dt st = st { eventActors = tick dt $ eventActors st}
 
 -- this structure shall be able to speed up the calculations necessary in each
 -- time step
 data StaticPath = SP Layer Layer Layer
 
-emptyState = ST (newPlayer playerStart) [] [] [] [] (Running newEventState) Day (SP emptyLayer emptyLayer emptyLayer)
+emptyState :: State
+emptyState = ST 
+  (newPlayer playerStart) 
+  [] 
+  [] 
+  (Running newEventState) 
+  Day 
+  (SP emptyLayer emptyLayer emptyLayer) startEventActors
+
+emptyLayer :: Layer
 emptyLayer = V.replicate (round width) (V.replicate (round height) False)
 
+startState :: State
+startState = 
+  let st = emptyState
+      st' = foldl (\state obj -> addObject obj state) st allObjects
+  in  st'
 
 dotpos :: State -> P3
 dotpos = pos . player 
@@ -92,3 +98,25 @@ reduceLayerByBlockers as st = st {staticPath = newLayers}
       (updateLayer ten False tenP)
       (updateLayer twenty False twentyP)
 
+
+-- State Machine
+setPrologDone :: State -> State
+setPrologDone st | isEventSensitive st = 
+  let Just es = eventState st
+      es_1 = es { prolog = True }
+  in updateEventState st es_1
+
+
+
+addEventActors :: Float -> Layer -> State -> Layer
+addEventActors z l st = updateLayer l True $ allActorPath z $ filter (not . blocksPlayer) $ Prelude.map snd $ eventActorList st
+
+reduceByBlockers :: Float -> Layer -> State -> Layer
+reduceByBlockers z l st = updateLayer l False $ allActorPath z $ filter (blocksPlayer) $ Prelude.map snd $ eventActorList st
+
+mapActor :: String -> (Actor -> Actor) -> State -> State
+mapActor n f st = 
+            let a = GS.lookupActor n $ eventActors st
+                a_1 = f a
+                eas = GS.replace (n, a_1) $ eventActors st
+            in st {eventActors = eas}

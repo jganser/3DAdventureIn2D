@@ -8,8 +8,8 @@ import DayTime
 import Colors
 
 
-oldShaman :: Actor
-oldShaman = undefined
+oldShaman :: (String,Actor)
+oldShaman = ("oldShaman", emptyActor) --todo
 
 
 

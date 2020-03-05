@@ -3,5 +3,5 @@ module Characters.Guard where
 import Actor
 import Graphics.Proc
 
-guard :: Actor
-guard = undefined
+guard :: (String,Actor)
+guard = ("guard", emptyActor)--todo

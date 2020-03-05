@@ -51,3 +51,9 @@ azure = crgb (240,255,255)
 
 ghostWhite :: Col
 ghostWhite = crgb (248,248,255)
+
+deepSkyBlue :: Col
+deepSkyBlue = crgb (0,191,255)
+
+skyBlue :: Col
+skyBlue = crgb (135,206,235)

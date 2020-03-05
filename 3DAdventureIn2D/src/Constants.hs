@@ -15,6 +15,12 @@ playerStart = (100,330,0)
 playerSize :: Float
 playerSize = 10
 
+townManSize :: Float
+townManSize = playerSize
+
+townManSize3 :: (Float,Float,Float)
+townManSize3 = (townManSize,townManSize,townManSize)
+
 femaleStart :: (Float,Float,Float)
 femaleStart = (100,300,0)
 
@@ -24,26 +30,8 @@ bossStart = (900,300,0)
 hengePos :: (Float,Float,Float)
 hengePos = (100,600,0)
 
-hengeLiftSize :: (Float,Float,Float)
-hengeLiftSize = (26,26,6)
-
-hengeLiftLow :: (Float,Float,Float)
-hengeLiftLow = hengePos
-
-hengeLiftUp :: (Float,Float,Float)
-hengeLiftUp = (100,600,20)
-
 bossSize :: (Float,Float,Float)
 bossSize = (70,70,6)
-
-lastLiftSize :: (Float,Float,Float)
-lastLiftSize = (60,30,3)
-
-lastLiftUp :: (Float,Float,Float)
-lastLiftUp = (820,300,20)
-
-lastLiftDown :: (Float,Float,Float)
-lastLiftDown = (255,300,10)
 
 layers :: [Float]
 layers = [0,10,20]
@@ -69,5 +57,5 @@ plazaPlatformStart = (240,230,6)
 plazaPlatformEnd :: (Float,Float,Float)
 plazaPlatformEnd = (160,170,6)
 
-liftSpeed :: Float
-liftSpeed = 40
+
+

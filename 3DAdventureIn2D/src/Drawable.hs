@@ -15,6 +15,9 @@ data BoundingBox = BB {
     z_high :: Float  -- z high value
   } deriving (Eq, Show)
 
+emptyBoundingBox :: BoundingBox
+emptyBoundingBox = BB 0 0 0 0 0 0
+
 class Drawable a where
     drawAt :: DayTime -> P3 -> a -> Draw
     path :: Float -> a -> Path

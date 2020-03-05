@@ -8,15 +8,21 @@ import Graphics.Proc (P3)
 
 type Tick = Float -> Actor -> Actor
 
+class Tickable a where
+  tick :: Float -> a -> a
+
 data Actor = A {
-        geo :: Geometry
-      , tick :: Tick
-      , moving :: Bool
-      , talking :: Bool
-      , finishedTalking :: Bool
-      , textToSay :: [String]
-      , blocksPlayer :: Bool
-    }
+    geo :: Geometry
+  , actorTick :: Tick
+  , moving :: Bool
+  , talking :: Bool
+  , finishedTalking :: Bool
+  , textToSay :: [String]
+  , blocksPlayer :: Bool
+}
+
+instance Tickable Actor where
+  tick dt a = (actorTick a) dt a
 
 instance Show Actor where
   show a = "Actor { "
@@ -41,22 +47,31 @@ onActorCheck (x,y,z) a =
   z >= z_low b && z <= z_high b &&
   (x,y) `elem` path z a -- is only checked if the player is in the bounding box of the actor
     where
-      b = boundingBox a 
+      b = boundingBox a
+
+onActorsCheck :: P3 -> [Actor] -> (Actor,Bool)
+onActorsCheck pos [] = (emptyActor, False)
+onActorsCheck pos (a:as) = 
+  if onActorCheck pos a then (a,True) 
+  else onActorsCheck pos as
 
 aPos :: Actor -> P3
-aPos a = transition $ transform $ geo a
+aPos = transition . transform . geo
 
 azPos :: Actor -> Float
 azPos = trd . aPos
+
+aSize :: Actor -> P3
+aSize = scaling . transform . geo
 
 idle :: Tick
 idle = const id
 
 newTick :: Tick -> Actor -> Actor
-newTick f a = a {tick = f}
+newTick f a = a {actorTick = f}
 
 moveTo :: Tick -> P3 -> Float -> Tick
-moveTo finishedTick target speed deltaT a = a {geo = newGeo, tick = newTick}
+moveTo finishedTick target speed deltaT a = a {geo = newGeo, actorTick = newTick}
   where
     pos = aPos a
     dir@(dx,dy,dz) = norm3 $ target - pos
@@ -71,6 +86,10 @@ moveTo finishedTick target speed deltaT a = a {geo = newGeo, tick = newTick}
               then finishedTick
               else moveTo finishedTick target speed
 
+addText :: [String] -> Actor -> Actor
+addText [] a = a
+addText text a = a { textToSay = textToSay a ++ text, finishedTalking = False}
+
 talk :: Actor -> (Maybe String, Actor)
 talk a | not (finishedTalking a) = 
   if tail (textToSay a) == [] 
@@ -83,7 +102,7 @@ moveToAndIdle = moveTo idle
 
 -- idleFor x seconds
 idleFor :: Float -> Tick -> Tick
-idleFor x nextTick deltaT a = a { tick = newTick}
+idleFor x nextTick deltaT a = a { actorTick = newTick}
   where
     newTick = if x - deltaT < 0 then nextTick else idleFor (x-deltaT) nextTick
 
@@ -109,7 +128,8 @@ instance Drawable Actor where
     path z a = path z (geo a)
     boundingBox = boundingBox . geo
 
-
+allActorPath :: Float -> [Actor] -> Path
+allActorPath z = concatMap $ path z
 
 -- Actors
 

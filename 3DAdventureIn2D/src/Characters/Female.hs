@@ -4,8 +4,8 @@ import Actor
 import Graphics.Proc
 import Constants
 
-female :: Actor
-female = undefined
+female :: (String,Actor)
+female = ("female", emptyActor)--todo
 
 drawFemale p@(x,y,z) size player@(p1,p2,p3) 
   | p3 /= z = return ()

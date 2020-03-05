@@ -14,15 +14,6 @@ type Level = [Geometry]
 
 level1  :: Level
 level1 = [
-    --sphere (200,200,50) 200 red,
-    --sphere (100,200,0) 450 blue,
-    --ellipsoide (T (300,100,0) (0,0,0) (50,100,20)) green,
-    --cube (T (300,275,50) (0,0,0) (100,150,100))  5 green,
-    --cube (T (50,225,50) (0,0,0) (200, 50,120)) 12 blue,
-    --fullCube (T (200,200,50) (0,0,0) (100,  150, 120)) (rgb 128 240 240),
-    --fullCube (T (200,300,50) (0,0,0) (400, 50, 120)) (rgb 240 128 128),
-    --cylinder (T (250,250,250) (0,0,0) (100,100,100)) olive 1,
-    --henge (T hengePos (0,0,0) (200,200,200)),
     --lines 
       gLine ( 80,300) (860,300) 0 14 darkSaddleBrown -- main street to boss
     , gLine (100,300) (100,320) 0 8 darkSaddleBrown -- street to the house of the hero    
@@ -69,8 +60,6 @@ threeDs = [
 
 level2 :: Level
 level2 = [
-    --  gLine ( 50, 50) (200,100) 10 20 yellow
-    --, gLine (150,150) (300,200) 10  4 lime
     --lines 
       gLine (255,230) (400,230) 10 8 darkSaddleBrown -- street to the right from  mainplatform
     , gLine (400,230) (400,110) 10 8 darkSaddleBrown -- street up
@@ -108,30 +97,10 @@ bs@(bx,by,bz) = bossStart
 
 allObjects = level1 ++ level2 ++ level3 ++ threeDs
 
-platforms = [    
-    ("hengePlatform", movingActor [hengePlatformStart, hengePlatformEnd] platformSpeed (fullCube (T hengePlatformStart (0,0,0) hengePlatformSize) green) 2) -- platform to henge
-  , ("plazaPlatform", movingActor [plazaPlatformStart, plazaPlatformEnd] platformSpeed (fullCube (T plazaPlatformStart (0,0,0) plazaPlatformSize) green) 3) -- main platform
-  , ("roundTripPlatform", movingActor [(100,205,20), (80,50,24), (220,30,16), (200,225,20)] platformSpeed (ellipsoide (T (100,205,20) (0,0,0) (20,40,4)) seaGreen) 2) -- 3rd level round trip platform
-  ]
-
-lifts = [
-    ("lastLift", lastLift)
-  , ("hengeLift", hengeLift)
-  ]
-
-townfolk = [
-  -- guards       -- blue with grey border
-  -- female       -- corale
-  --, female
-  -- old lady     -- deep purple
-  -- old man      -- crimson
-  -- shaman       -- white with purple border
-  ]
-
 normalTownFolkPos :: [P3]
 normalTownFolkPos = [
   --todo
   ]
 
-bossActor = ("boss", boss (T bs (0,0,0) bossSize))
+
  
