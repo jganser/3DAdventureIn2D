@@ -36,6 +36,11 @@ instance Show Actor where
 
 emptyActor :: Actor
 emptyActor = A emptyGeo idle False False False [] False 
+
+talkingCharacter :: Geometry -> [String] -> Actor
+talkingCharacter geometry text = 
+  let a = emptyActor
+  in a { geo = geometry, talking = True, textToSay = text, blocksPlayer = True}
     
 pIsOnActor :: Actor -> (Float,Float,Float) -> Bool
 pIsOnActor = flip onActorCheck

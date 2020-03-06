@@ -4,6 +4,7 @@ module Lib
     ) where
 
 import Graphics.Proc
+import Control.Concurrent
 import Constants
 import State
 import Levels
@@ -21,16 +22,16 @@ import qualified Data.Vector as V
 import GameState as GS
 
 
-main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = update, procKeyPressed = movement }
+main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = update, procKeyPressed = processKeys }
 
 setup :: Pio State
 setup = do
-        size (width, height)
-        let st = startState
-        normaltownfolk <- createAllTownPeople normalTownFolkPos
-        let st_3 = st { staticActors = normaltownfolk }
-        let st_4 = reduceLayerByBlockingStaticActors st_3
-        return st_4
+    size (width, height)
+    let st = startState
+    normaltownfolk <- createAllTownPeople normalTownFolkPos
+    let st_3 = st { staticActors = normaltownfolk }
+    let st_4 = reduceLayerByBlockingStaticActors st_3
+    return st_4
 
 draw :: State -> Pio ()
 draw st = do     
@@ -48,22 +49,19 @@ draw st = do
         mapM_ (drawAt time playerPos) sActs
         drawAt time playerPos $ eventActors st
             -- draw the player, regardless of daytime 
-        drawP (player st) playerPos
-
-        
-        --TODO
-        -- Text Test !! 
-        let pText = PText "Hello World!" (100,900) 2 white black
-        drawPText pText time
-
-    where xy (px,py,pz) = (px,py)      
-        
+        drawP (player st) playerPos     
+        -- draw TextField
+        writeStandard (currentText st) time
+        when (playerTalks st && timeToNextLine st < 0) $ writePressE time
 
 update :: TimeInterval -> State -> Pio State
 update deltaT st = do
+    let t = timeToNextLine st
+    let t_1 = if t >= 0 then  t - deltaT else t
     st_1 <- updateActorMovement deltaT st
     st_2 <- updatePlayerStandsOn st_1
-    return st_2
+    let st_3 = st_2 { timeToNextLine = t_1 }
+    return st_3
 
 updatePlayerStandsOn :: State -> Pio State
 updatePlayerStandsOn st = do
@@ -88,19 +86,57 @@ bgForDayTime daytime | daytime == Night = background black
 
 data Dir = Up | Down | Left | Right deriving (Eq,Show)
 
+processKeys :: State -> Pio State
+processKeys st = 
+    if playerTalks st 
+    then keepTalking st
+    else movement st
+
+keepTalking :: State -> Pio State
+keepTalking st = 
+  if timeToNextLine st > 0 then return st
+  else do
+    k <- key
+    case k of 
+        Char 'e' -> curTextUpdate st            
+        _  -> return st
+
+curTextUpdate :: State -> Pio State
+curTextUpdate st = do
+    let (text, p) = nextTextLine $ player st
+    -- liftIO $ putStrLn $ "player after next Line: " ++ show p      
+    return $ st { 
+        player = p, 
+        timeToNextLine = 0.2,
+        currentText = 
+            if hasNextLine p 
+            then text 
+            else standardText
+        }
+
+writeStandard :: String -> DayTime -> Draw 
+writeStandard text time = 
+    let pText = PText text (80,900) 2 white black
+    in  drawPText pText time
+      
+writePressE :: DayTime -> Draw
+writePressE time = 
+    drawPText (PText "--- Press E ---" (650,930) 2 white black) time
+    
+
 movement :: State -> Pio State
 movement st = do
     let playerSpeed = 2
     arrow <- key
     case arrow of
-        SpecialKey KeyUp    -> return (newPos (onPath st ((0,(-1) * playerSpeed,0) + dotpos st)) st)
-        Char 'w'            -> return (newPos (onPath st ((0,(-1) * playerSpeed,0) + dotpos st)) st)
-        SpecialKey KeyDown  -> return (newPos (onPath st ((0,1 * playerSpeed,0) + dotpos st)) st)
-        Char 's'            -> return (newPos (onPath st ((0,1 * playerSpeed,0) + dotpos st)) st)
-        SpecialKey KeyRight -> return (newPos (onPath st ((1 * playerSpeed,0,0) + dotpos st)) st)
-        Char 'd'            -> return (newPos (onPath st ((1 * playerSpeed,0,0) + dotpos st)) st)
-        SpecialKey KeyLeft  -> return (newPos (onPath st (((-1) * playerSpeed,0,0) + dotpos st)) st)
-        Char 'a'            -> return (newPos (onPath st (((-1) * playerSpeed,0,0) + dotpos st)) st)
+        SpecialKey KeyUp    -> return $ moveOrStartTalking playerSpeed Up st
+        Char 'w'            -> return $ moveOrStartTalking playerSpeed Up st
+        SpecialKey KeyDown  -> return $ moveOrStartTalking playerSpeed Down st
+        Char 's'            -> return $ moveOrStartTalking playerSpeed Down st
+        SpecialKey KeyRight -> return $ moveOrStartTalking playerSpeed Right st
+        Char 'd'            -> return $ moveOrStartTalking playerSpeed Right st
+        SpecialKey KeyLeft  -> return $ moveOrStartTalking playerSpeed Left st
+        Char 'a'            -> return $ moveOrStartTalking playerSpeed Left st
         Char 'h'            -> return $ mapActor "hengeLift" sendHengeLiftUp st
         Char 'l'            -> return $ mapActor "lastLift" sendUp st
         Char 'k'            -> return $ mapActor "lastLift" sendDown st
@@ -137,7 +173,8 @@ posOf speed Left  st = ((-1) * speed,0,0) + dotpos st
 onPath :: State -> P3 -> P3
 onPath st p@(p1,p2,z) =
     let l = staticPathAt z $ staticPath st
-        layer = addEventActors z l st                 
+        lea = addEventActors z l st
+        layer = reduceByBlockers z lea st
     in  if (layer V.! round p1) V.! round p2 then p else dotpos st
 
               

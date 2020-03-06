@@ -8,9 +8,10 @@ height :: Float
 height = 1060.0
 
 playerStart :: (Float,Float,Float)
-playerStart = (100,330,0)
+--playerStart = (100,330,0)
 --playerStart = hengePos
 --playerStart = lastLiftUp
+playerStart = (460,440,0) -- right above shaman
 
 playerSize :: Float
 playerSize = 10

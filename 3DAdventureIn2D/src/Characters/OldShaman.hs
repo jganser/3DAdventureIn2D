@@ -1,6 +1,8 @@
 module Characters.OldShaman (oldShaman) where
 
 import Actor
+import Geometry
+import Objects
 import Graphics.Proc
 import ObjectUtils
 import Constants
@@ -8,22 +10,35 @@ import DayTime
 import Colors
 
 
-oldShaman :: (String,Actor)
-oldShaman = ("oldShaman", emptyActor) --todo
+oldShaman :: (String,Actor)--todo
+oldShaman = ("oldShaman", oldShamanActor) 
 
+oldShamanActor :: Actor
+oldShamanActor = talkingCharacter oldShamanGeo firstDialog
 
+oldShamanGeo :: Geometry
+oldShamanGeo = gSCirc (79,294) playerSize 10 azure purple
 
-drawShaman ::  DayTime -> P3 -> Actor -> Draw
-drawShaman daytime playerPos a 
- | (trd playerPos) /= azPos a = return ()
- | otherwise = do
-    stroke purple
-    fill azure
-    strokeWeight 1
-    ellipse (centerOf $ aPos a) (playerSize, playerSize)
+-- Pathing
+-- the path the old shaman shall take
 
-tick :: Tick
-tick = idle
+shamansFirstPath :: [P3]
+shamansFirstPath = [
+    (79,294,10)
+  , (80,100,10)  -- straight up into the middle
+  , (400,100,10) -- right into the circ
+  , (400,230,10) -- down
+  , (255,230,10) -- left
+  , (270,300,10) -- lposition on platform in the middle realm
+  ]
+
+shamansSecondPath :: [P3]
+shamansSecondPath = [
+    (835,300,20) -- start on the platform when it is in the upper realm
+  , (922,300,20)
+  ]
+
+-- Dialogs
 
 firstDialog :: [String]
 firstDialog = [

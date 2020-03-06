@@ -9,11 +9,12 @@ import Objects
 
 townpeople :: P3 -> Pio Actor
 townpeople (x,y,z) = do
-    index <- liftIO $ randomRIO (0, length townDialog)
+    index <- liftIO $ randomRIO (0, length townDialog - 1)
     let text = townDialog !! index
-    index <- liftIO $ randomRIO (0,length townColors)
+    index <- liftIO $ randomRIO (0, length townColors - 1)
     let color = townColors !! index
-    return $ A (gCirc (x,z) playerSize z color) idle False True False [text] True
+    let scol = nextCol index
+    return $ A (gSCirc (x,y) playerSize z color scol) idle False True False [text] True
 
 createAllTownPeople :: [P3] -> Pio [Actor]
 createAllTownPeople = mapM townpeople
@@ -24,6 +25,9 @@ townColors = [
   , goldenRod
   , cadetBlue 
   ]
+
+nextCol :: Int -> Col
+nextCol i = (!!) townColors $ mod (i+1) $ length townColors
 
 townDialog :: [String]
 townDialog = [

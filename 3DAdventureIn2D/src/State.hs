@@ -23,7 +23,9 @@ data State = ST {
     gameState :: GameState,
     daytime :: DayTime,
     staticPath :: StaticPath,
-    eventActors :: EventActors
+    eventActors :: EventActors,
+    currentText :: String,
+    timeToNextLine :: Float
 }
 
 eventActorList :: State -> [(String, Actor)] -- this list has a name to actor reference included to enable situational updates
@@ -49,6 +51,8 @@ emptyState = ST
   (Running newEventState) 
   Day 
   (SP emptyLayer emptyLayer emptyLayer) startEventActors
+  standardText
+  0
 
 emptyLayer :: Layer
 emptyLayer = V.replicate (round width) (V.replicate (round height) False)
@@ -58,6 +62,17 @@ startState =
   let st = emptyState
       st' = foldl (\state obj -> addObject obj state) st allObjects
   in  st'
+
+standardText :: String
+standardText = "    --- Move with W A S D or the Arrow keys ---"
+
+-- helper
+mapActor :: String -> (Actor -> Actor) -> State -> State
+mapActor n f st = 
+            let a = GS.lookupActor n $ eventActors st
+                a_1 = f a
+                eas = GS.replace (n, a_1) $ eventActors st
+            in st {eventActors = eas}
 
 dotpos :: State -> P3
 dotpos = pos . player 
@@ -74,6 +89,29 @@ addObject geo st = st {objects = addedObj, staticPath = extendedPath}
       (updateLayer ten True (path 10 geo))
       (updateLayer twenty True (path 20 geo))
         where (SP zero ten twenty) = staticPath st
+
+playerTalks :: State -> Bool
+playerTalks = isTalking . player
+
+playerFinishedTalking :: State -> State
+playerFinishedTalking st  = let p = stopTalking $ player st in st { player = p }
+
+-- State Machine
+setPrologDone :: State -> State
+setPrologDone st | isEventSensitive st = 
+  let Just es = eventState st
+      es_1 = es { prolog = True }
+  in updateEventState st es_1
+
+
+
+
+-- Layering
+addEventActors :: Float -> Layer -> State -> Layer
+addEventActors z l st = updateLayer l True $ allActorPath z $ filter (not . blocksPlayer) $ Prelude.map snd $ eventActorList st
+
+reduceByBlockers :: Float -> Layer -> State -> Layer
+reduceByBlockers z l st = updateLayer l False $ allActorPath z $ filter (blocksPlayer) $ Prelude.map snd $ eventActorList st
 
 staticPathAt :: Float -> StaticPath -> Layer
 staticPathAt z (SP zero ten twenty) = case z of
@@ -99,24 +137,5 @@ reduceLayerByBlockers as st = st {staticPath = newLayers}
       (updateLayer twenty False twentyP)
 
 
--- State Machine
-setPrologDone :: State -> State
-setPrologDone st | isEventSensitive st = 
-  let Just es = eventState st
-      es_1 = es { prolog = True }
-  in updateEventState st es_1
 
 
-
-addEventActors :: Float -> Layer -> State -> Layer
-addEventActors z l st = updateLayer l True $ allActorPath z $ filter (not . blocksPlayer) $ Prelude.map snd $ eventActorList st
-
-reduceByBlockers :: Float -> Layer -> State -> Layer
-reduceByBlockers z l st = updateLayer l False $ allActorPath z $ filter (blocksPlayer) $ Prelude.map snd $ eventActorList st
-
-mapActor :: String -> (Actor -> Actor) -> State -> State
-mapActor n f st = 
-            let a = GS.lookupActor n $ eventActors st
-                a_1 = f a
-                eas = GS.replace (n, a_1) $ eventActors st
-            in st {eventActors = eas}

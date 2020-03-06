@@ -34,16 +34,16 @@ level1 = [
     , gLine (665,600) (700,600) 0 8 darkSaddleBrown -- street at the right low right
     -- 2D Objects
     , gFullRect (100,340) (40,40) 0 1 firebrick -- house of the hero
-    , gFullRect (385,120) (50,200) 0 1 royalBlue -- Forum part => left
-    , gFullRect (460,45) (100,50) 0 1 royalBlue  -- Form part  => up
-    , gFullRect (460,195) (100,50) 0 1 royalBlue -- Form part  => down
-    , gFullRect (535,120) (50,200) 0 1 royalBlue -- Form part  => right
-    , gCirc (460,120) 50 0 gold -- Forum Plaza
+    , gFullRect (385,120) (50,200) 0 1 royalBlue -- Forum part => left   x = 360 - 410, y =  20 - 220
+    , gFullRect (460,45) (100,50) 0 1 royalBlue  -- Form part  => up     x = 410 - 510, y =  20 -  70
+    , gFullRect (460,195) (100,50) 0 1 royalBlue -- Form part  => down   x = 410 - 510, y = 170 - 220
+    , gFullRect (535,120) (50,200) 0 1 royalBlue -- Form part  => right  x = 510 - 560, y =  20 - 220
+    , gCirc (460,120) 50 0 gold -- Forum Plaza                           x = 435 - 485, y =  95 - 145
     , gEllipse (40,100) (60,120) 0 cadetBlue -- upper left hud
     , gCirc (500, 460) 80 0 firebrick -- house of the shaman
     , gFullRect (840,520) (80,60) 0 1 firebrick -- fullrect under boss
     , gCirc (570,600) 20 0 cadetBlue -- low left hud
-    , gEllipse (730,600) (60,40) 0 cadetBlue -- upper left hud
+    , gEllipse (730,600) (60,40) 0 cadetBlue -- upper left hud           x = 700 - 760, y =  580 - 620
     ]
     
 threeDs :: Level
@@ -52,7 +52,7 @@ threeDs = [
   , cylinder (T (105,100,0) (0,0,0) (30,30,25)) olive 1 -- first round cylindric hud after main platform left
   , cylinder (T (80,100,0) (0,0,0) (30,30,30)) seaGreen 1 -- second round cylindric hud after main platform left
   , henge (T hengePos (0,0,0) (200,200,100))
-  , fullCube (T (240,275,18) (0,0,0) (6,50,36)) darkSaddleBrown -- street to main platform
+  , fullCube (T (240,275,18) (0,0,0) (10,50,36)) darkSaddleBrown -- street to main platform
   , fullCube (T (640,600,10) (0,0,0) (50,40,36)) seaGreen -- cube at the bottom right
   , ellipsoide (T (400,100,10) (0,0,0) (40,40,6)) seaGreen -- sphere
   , cube (T (300,510,18) (0,0,0) (300,12,6)) 6 paleGoldenRod -- open cube in 3rd level, that shall be visible whle going up
@@ -84,7 +84,7 @@ level3 = [
   , gLine (300,320) (330,320) 20 10 seaGreen
   , gLine (330,315) (330,290) 20 10 seaGreen
   , gLine (330,290) (790,290) 20 10 seaGreen
-  , gLine (848,300) (905,300) 20 6 seaGreen
+  , gLine (848,300) (925,300) 20 6 seaGreen -- street over the boss, with spare space for oldShaman
   , gLine (110,600) (200,600) 20 8 sienna -- street left leading onto the henge lift
   -- 2d objects
   , gEllipse (450, 600) (100,60) 20 saddleBrown
@@ -99,7 +99,27 @@ allObjects = level1 ++ level2 ++ level3 ++ threeDs
 
 normalTownFolkPos :: [P3]
 normalTownFolkPos = [
-  --todo
+    (520,25,0)
+  , (525,45,0)
+  , (540,75,0)
+  , (550,115,0)
+  , (555,125,0)
+  , (520,205,0)
+  , (530,210,0)
+  , (420,25,0)
+  , (430,45,0)
+  , (440,23,0)
+  , (480,55,0)
+  , (470,60,0)
+  , (500,25,0)
+  , (420,178,0)
+  , (420,205,0)
+  , (444,185,0)
+  , (440,215,0)
+  , (450,136,0)
+  , (460,146,0)
+  , (745,610,0)
+  , (850,530,0)
   ]
 
 

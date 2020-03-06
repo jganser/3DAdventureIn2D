@@ -10,7 +10,9 @@ module Objects(
     , gRect
     , gFullRect
     , gCirc
+    , gSCirc
     , gEllipse
+    , gSEllipse
     , cylinder
     , henge
     , movingActor
@@ -61,6 +63,12 @@ gCirc pos d = gEllipse pos (d,d)
 
 gEllipse :: P2 -> P2 -> Z -> Col -> Geometry
 gEllipse (bx,by) (ex,ey) z col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawEllipse col) ellipsePath
+
+gSEllipse :: P2 -> P2 -> Z -> Col -> Col -> Geometry
+gSEllipse (bx,by) (ex,ey) z col scol = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawSEllipse col scol) ellipsePath
+
+gSCirc  :: P2 -> Diameter -> Z -> Col -> Col -> Geometry
+gSCirc pos d = gSEllipse pos (d,d)
 
 -- 3D Objects
 
@@ -147,6 +155,14 @@ drawEllipse :: Col -> Transform -> DayTime -> P3 -> Draw
 drawEllipse col t dt (_,_,z) | outOf2DRange t z = return ()
       | otherwise = do
         strokeFill $ colorForDayTime col dt
+        strokeWeight 1
+        ellipse (centerOf $ transition t) (centerOf $ scaling t)
+
+drawSEllipse :: Col -> Col -> Transform -> DayTime -> P3 -> Draw
+drawSEllipse col scol t dt (_,_,z) | outOf2DRange t z = return ()
+      | otherwise = do
+        stroke $ colorForDayTime scol dt
+        fill $ colorForDayTime col dt
         strokeWeight 1
         ellipse (centerOf $ transition t) (centerOf $ scaling t)
 
