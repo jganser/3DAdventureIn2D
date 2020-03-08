@@ -20,3 +20,6 @@ drawFemale p@(x,y,z) size player@(p1,p2,p3)
 
 goToMonster :: Actor -> Actor
 goToMonster = newTick $ moveToAndIdle bossStart 3
+
+sacrificed :: Actor -> Bool
+sacrificed = (==) bossStart . aPos 

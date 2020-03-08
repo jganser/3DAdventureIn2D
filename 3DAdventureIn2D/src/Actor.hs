@@ -27,11 +27,11 @@ instance Tickable Actor where
 instance Show Actor where
   show a = "Actor { "
     ++ show (geo a) 
-    ++ ", moving: "++ show (moving a) 
-    ++ ", talking: "++ show (talking a)
-    ++ ", finishedTalking: "++ show (finishedTalking a)
+    ++ ", moving: " ++ show (moving a) 
+    ++ ", talking: " ++ show (talking a)
+    ++ ", finishedTalking: " ++ show (finishedTalking a)
     ++ ", nextLine: " ++ show (take 1 $ textToSay a)
-    ++ ", blocksPlayer: "++ show (blocksPlayer a)
+    ++ ", blocksPlayer: " ++ show (blocksPlayer a)
     ++ " }"
 
 emptyActor :: Actor
