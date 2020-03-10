@@ -6,6 +6,7 @@ import Actor
 import State
 import Player
 import Constants
+import ObjectUtils
 import qualified GameState as GS
 import qualified Characters.Elder as Elder
 import qualified Characters.Female as Female
@@ -139,15 +140,19 @@ oldShamanInFirstTarget =
   eaCheck OldShaman.isInFirstTarget GS.oldShaman
 
 oldShamanCheck3 :: State -> Bool
-oldShamanCheck3 = oldShamanInSecondTarget
+oldShamanCheck3 = eaCheck OldShaman.isOnTopLevel GS.oldShaman
+
+oldShamanCheck4 :: State -> Bool
+oldShamanCheck4 = oldShamanInSecondTarget
 oldShamanInSecondTarget = 
   eaCheck OldShaman.isInSecondTarget GS.oldShaman
 
-oldShamanCheck4 :: State -> Bool
-oldShamanCheck4 = eaTalkCheck GS.oldShaman
+  
+kickedCheck :: State -> Bool  
+kickedCheck = eaTalkCheck GS.oldShaman
 
 inMonsterCheck :: State -> Bool
-inMonsterCheck = (==) playerVomitTarget . pos . player
+inMonsterCheck = (==) (trd playerVomitTarget) . trd . pos . player
 
 vomitCheck :: State -> Bool
 vomitCheck = eaCheck ((==) Female.vomitTarget . aPos) GS.female

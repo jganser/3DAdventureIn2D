@@ -40,40 +40,52 @@ setup = do
     return st_5
 
 draw :: State -> Pio ()
-draw st = do     
-        -- provide easy access for pure values
-        let time = daytime st        
-        let geos = objects st
-        let sActs = staticActors st 
-        let playerPos = dotpos st
-        -- draw the scene
-            -- draw the background for the current daytime
-        bgForDayTime time
-            -- draw simple gemoetries if they are visible, with regards to daytime
-        mapM_ (drawAt time playerPos) geos
-            -- draw actors if they are visible, with regards to daytime
-        mapM_ (drawAt time playerPos) sActs
-        drawAt time playerPos $ eventActors st
-            -- draw the player, regardless of daytime 
-        drawP (player st) playerPos     
-        -- draw TextField
-        writeStandard (currentText st) time
-        when (playerTalks st && timeToNextLine st < 0) $ 
-            writePressE time
-        when (not (playerTalks st) && hengeIsActive st && 
-            isPlayerOnHengeLift (player st)) $ writePressH time
-        when (not (playerTalks st) && isPlayerOnLastLiftUp (player st)) $ 
-            writePressK time
-        when (not (playerTalks st) && isPlayerOnLastLiftDown (player st)) $ 
-            writePressL time
+draw st = 
+    if gameState st == GameWon 
+    then drawWinningScreen st
+    else drawRunning st
+    
+drawWinningScreen :: State -> Pio ()
+drawWinningScreen = const $ do
+    let pText = PText "Congrats to winning!" (100,400) 6 white black
+    bgForDayTime Night
+    drawPText pText Night
+
+
+drawRunning :: State -> Pio ()
+drawRunning st = do            
+    -- provide easy access for pure values
+    let time = daytime st        
+    let geos = objects st
+    let sActs = staticActors st 
+    let playerPos = dotpos st
+    -- draw the scene
+        -- draw the background for the current daytime
+    bgForDayTime time
+        -- draw simple gemoetries if they are visible, with regards to daytime
+    mapM_ (drawAt time playerPos) geos
+        -- draw actors if they are visible, with regards to daytime
+    mapM_ (drawAt time playerPos) sActs
+    drawAt time playerPos $ eventActors st
+        -- draw the player, regardless of daytime 
+    drawP (player st) playerPos     
+    -- draw TextField
+    writeStandard (currentText st) time
+    when (playerTalks st && timeToNextLine st < 0) $ 
+        writePressE time
+    when (not (playerTalks st) && hengeIsActive st && 
+        isPlayerOnHengeLift (player st)) $ writePressH time
+    when (not (playerTalks st) && isPlayerOnLastLiftUp (player st)) $ 
+        writePressK time
+    when (not (playerTalks st) && isPlayerOnLastLiftDown (player st)) $ 
+        writePressL time
 
 update :: TimeInterval -> State -> Pio State
 update deltaT st = do    
     --liftIO $ putStrLn $ "EventState isInProlog: " ++ show (isInProlog st)
     --liftIO $ putStrLn $ "Guardcheck: " ++ show (guardCheck st)
     --liftIO $ putStrLn $ "GuardDialog: " ++ show (textToSay $ State.lookupActor "guard" st)
-    --liftIO $ putStrLn $ "EventState isInProlog2: " ++ show (isInProlog2 st)
-    
+    --liftIO $ putStrLn $ "EventState isInProlog2: " ++ show (isInProlog2 st)    
     let t = timeToNextLine st
     let t_1 = if t >= 0 then  t - deltaT else t
     st_1 <- updateActorMovement deltaT st

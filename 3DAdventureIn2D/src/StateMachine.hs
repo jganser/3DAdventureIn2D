@@ -43,7 +43,9 @@ checkFlowers = phaseCheck isInFlowers flowerCheck setFlowerDone checkOld1
 checkOld1 = phaseCheck isInOldShaman1 oldShamanCheck1 setOld1 checkOld2
 checkOld2 = phaseCheck isInOldShaman2 oldShamanCheck2 setOld2 checkOld3
 checkOld3 = phaseCheck isInOldShaman3 oldShamanCheck3 setOld3 checkOld4
-checkOld4 = phaseCheck isInOldShaman4 oldShamanCheck4 setOld4 checkInMonster
+checkOld4 = phaseCheck isInOldShaman4 oldShamanCheck4 setOld4 checkKicked
+
+checkKicked = phaseCheck isInPlayerKicked kickedCheck setPlayerKicked checkInMonster
 
 checkInMonster = phaseCheck isInPlayerInMonster inMonsterCheck setInMonster checkVomit
 
@@ -69,6 +71,7 @@ isInPlayerInMonster = isInPhaseX inPlayerInMonster
 isInVomitted = isInPhaseX inVomitted
 isInEpilog = isInPhaseX inEpilog
 isInStoodOnPlatform = isInPhaseX inStoodOnPlatform
+isInPlayerKicked = isInPhaseX inPlayerKicked
 
 
 inPhase :: (EventState -> Bool) -> Maybe EventState -> Bool
@@ -88,6 +91,7 @@ inPlayerInMonster = inPhase playerInMonster
 inVomitted = inPhase playerAndFemaleOutOfMonster
 inEpilog = inPhase epilog
 inStoodOnPlatform = inPhase stoodOnPlatform
+inPlayerKicked = inPhase playerKicked
 
 
      

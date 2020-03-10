@@ -156,10 +156,16 @@ drawLine sw col t@(T (tx,ty,_) _ (sx,sy,_)) dt (_,_,z) | outOf2DRange t z = retu
       | otherwise = do
         strokeWeight sw
         stroke $ colorForDayTime col dt
-        line begin end
+        line beginAdjusted endAdjusted
         where
             begin = (tx,ty)
             end = (sx,sy)
+            ishorizontal = tx /= sx
+            xPlus = if ishorizontal then sw/2 else 0
+            yPlus = if ishorizontal then 0 else sw/2
+            tOverS = if ishorizontal then tx < sx else ty < sy
+            beginAdjusted = if tOverS then begin - (xPlus,yPlus) else begin + (xPlus,yPlus)
+            endAdjusted = if tOverS then end + (xPlus,yPlus) else end - (xPlus,yPlus)
     
     
 drawEllipsoide :: Col -> Transform -> DayTime -> P3 -> Draw

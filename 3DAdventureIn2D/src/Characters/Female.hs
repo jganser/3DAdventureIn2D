@@ -55,5 +55,6 @@ femaleDialog = [
   , "Hero     : True love, my dear."
   , "Beloved  : Oh, I love you! Smoothtalker..."
   , "Hero     : I love you, too."
+  , "Hero     : But my dear I have to say, it was quite the journey!"
   --todo EPILOG
   ]
