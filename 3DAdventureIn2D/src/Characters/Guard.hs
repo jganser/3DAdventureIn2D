@@ -8,13 +8,18 @@ import Constants
 import Graphics.Proc
 
 guard :: (String,Actor)
-guard = ("guard", emptyActor)--todo
+guard = (name, emptyActor)--todo
+
+name = "guard"
 
 guardActor :: Actor
 guardActor = talkingCharacter guardGeometry guardDialog
 
 guardGeometry :: Geometry
 guardGeometry = gSCirc (79,294) (playerSize+2) 10 darkSlateGray gray 
+
+moveGuard :: Actor -> Actor
+moveGuard a = a {actorTick = moveToAndIdle [(830,293,0)] 80}
 
 guardDialog :: [String]
 guardDialog = [
@@ -25,7 +30,11 @@ guardDialog = [
   , "Beloved   : Hush, I need to go. You know it..."
   , "Beloved   : It\'s for your sake as well."
   , "Beloved   : And I don\'t want somebody to take my place as sacrifice"
-  , "Hero      : I know that the lottery was fair, but still..."
+  ]
+
+guardDialog2 :: [String]
+guardDialog2 = [
+     "Hero      : I know that the lottery was fair, but still..."
   , "Guard     : I hate to do this. But we really need to go now."
   , "Beloved   : Oh, how much I love you. I need to go! To save the village."
   , "Beloved   : Live, for my sake, live for us both."

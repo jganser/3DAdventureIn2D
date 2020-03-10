@@ -27,14 +27,17 @@ data EventState = ES {
     prolog :: Bool,                         --   1
     oldManInfo :: Bool,                     --   2
     hasFlowers :: Bool,                     --   3
-    shamanMovedAside :: Bool,               --   4
+    shamanMovedAside :: Bool,               --   4    
     oldShamanPartOne :: Bool,               --   5
     oldShamanOnPlatform :: Bool,            --   6
     oldShamanOnPlatformAtTop :: Bool,       --   7
     oldShamanOverMonster :: Bool,           --   8
     playerInMonster :: Bool,                --   9
     playerAndFemaleOutOfMonster :: Bool,    --  10
-    epilog :: Bool                          --  11
+    epilog :: Bool,                         --  11
+    stoodOnPlatform :: Bool,                --  12
+    prolog2 :: Bool,                        --  13
+    playerKicked :: Bool                    --  14
 } deriving (Eq, Ord, Show)
 
 
@@ -49,8 +52,11 @@ instance EventHolder GameState where
   updateEventState GameWon  _ = GameWon
   updateEventState (Running _) es = Running es
 
---                   1     2    3     4      5    6     7      8    9     10    11
-newEventState = ES False False False False False False False False False False False
+--     1     2    3     4      5    6     7      8    
+--       9    10    11    12    13    14
+newEventState = 
+  ES False False False False False False False False 
+      False False False False False False
 
 type EventActors = EventActor (String,Actor) 
 
@@ -76,6 +82,7 @@ instance Drawable EventActors where
   drawAt daytime pos = mapM_ (\(n,a) -> drawAt daytime pos a) . asList
   path z = foldr (\(n,a) p -> p ++ path z a) []
   boundingBox = const emptyBoundingBox
+  newDraw = const id
 
 instance Foldable EventActor where
   foldr f z = Prelude.foldr f z . asList

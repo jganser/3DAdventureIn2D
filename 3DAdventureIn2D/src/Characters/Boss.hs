@@ -1,7 +1,8 @@
 module Characters.Boss where
 
+import Drawable
 import Geometry
-import Actor
+import Actor as A
 import Objects
 import ObjectUtils
 import Constants
@@ -10,19 +11,27 @@ import DayTime
 import Graphics.Proc
 
 boss :: (String,Actor)
-boss = ("boss", bossT (T bossStart (0,0,0) bossSize))
+boss = (name, bossT (T bossStart (0,0,0) bossSize))
 
 -- Ticks
 bossTick = idle --Constant Tick
 
-
+name = "boss"
 
 bossT :: Transform -> Actor
-bossT t = A (Geo t drawBoss fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text
+bossT t = A (Geo t (drawBoss False) fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text
 
+closeMouth :: Actor -> Actor
+closeMouth = newDraw (drawBoss True)
 
-drawBoss :: Transform -> DayTime -> P3 -> Draw
-drawBoss t dt (px,py,pz) 
+vomit :: Actor -> Actor
+vomit = newDraw drawBossWithoutMouth 
+
+flee :: Actor -> Actor
+flee a = a {actorTick = moveToAndIdle [bossStart - (0,0,12)] 20}
+
+drawBoss :: Bool -> Transform -> DayTime -> P3 -> Draw
+drawBoss mouthClosed t dt (px,py,pz) 
   | outOf3DRange t pz = return ()
   | otherwise = do 
         stroke $ colorForDayTime black dt
@@ -32,7 +41,7 @@ drawBoss t dt (px,py,pz)
         line rightUpper rightLower
         line rightLower leftLower
         -- mouth --TODO
-        line (fst leftLower, leftFstThirdUp) (fst leftLower, leftSndThirdUp)
+        when mouthClosed $ line (fst leftLower, leftFstThirdUp) (fst leftLower, leftSndThirdUp)
         -- round stuff
         strokeWeight 1
         -- eyes
@@ -69,4 +78,7 @@ drawBoss t dt (px,py,pz)
             pupilRadius = eyeRadius / 2
             lowerPupilMid = lowerEyeMid - (lowerEyeVecNorm `timesF` pupilRadius)
             upperPupilMid = upperEyeMid - (upperEyeVecNorm `timesF` pupilRadius)
+
+drawBossWithoutMouth :: Transform -> DayTime -> P3 -> Draw
+drawBossWithoutMouth = drawBoss False
 

@@ -1,4 +1,4 @@
-module Characters.NewShaman (newShaman, moveAside) where
+module Characters.NewShaman (newShaman, moveAside, name, addShamansText) where
 
 import Actor
 import Geometry
@@ -8,11 +8,17 @@ import Constants
 import DayTime
 import Objects
 import Colors
+import Drawable
 
 
 newShaman :: (String, Actor)
-newShaman = (,) "newShaman" $ talkingCharacter (Geo (T shamanStart (0,0,0) townManSize3) drawShaman pathShaman) shamansText  
+newShaman = (,) name newShamanActor 
 
+newShamanActor = talkingCharacter newShamanGeo shamansText
+
+newShamanGeo = Geo (T shamanStart (0,0,0) townManSize3) drawShaman pathShaman
+
+name = "newShaman"
 
 drawShaman ::  Transform -> DayTime -> P3 -> Draw
 drawShaman t daytime playerPos 
@@ -26,7 +32,7 @@ drawShaman t daytime playerPos
 pathShaman = ellipsePath
 
 moveAside :: Tick
-moveAside = moveToAndIdle shamanEnd shamanSpeed
+moveAside = moveToAndIdle [shamanEnd] shamanSpeed
 
 -- constants
 

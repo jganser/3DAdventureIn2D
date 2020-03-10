@@ -4,7 +4,6 @@ import Drawable
 import DayTime
 import Graphics.Proc
 
-data Transform = T {transition :: P3, rotation :: P3, scaling :: P3} deriving (Eq, Show)
 
 data Geometry = Geo {
         transform :: Transform, 
@@ -19,6 +18,7 @@ instance Drawable Geometry where
     drawAt daytime pPos (Geo t drawIt _) = drawIt t daytime pPos
     path height (Geo t _ pathOfIt) = pathOfIt t height
     boundingBox (Geo (T (x,y,z) _ (sx,sy,sz)) _ _) = BB (x-sx/2) (x+sx/2) (y-sy/2) (y+sy/2) (z-sz/2) (z+sz/2)
+    newDraw f g = g { drawGeo = f}
 
 newGeoPos :: P3 -> Geometry -> Geometry
 newGeoPos pos g = g { transform = newTPos pos $ transform g}
@@ -31,3 +31,5 @@ emptyGeo = Geo zeroTransform (\ _ _ _ -> return ()) (\_ _ -> [])
 
 zeroTransform :: Transform
 zeroTransform = T (0,0,0) (0,0,0) (0,0,0)
+
+

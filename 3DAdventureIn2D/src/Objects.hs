@@ -9,6 +9,7 @@ module Objects(
     , gLine
     , gRect
     , gFullRect
+    , gSFullRect
     , gCirc
     , gSCirc
     , gEllipse
@@ -38,7 +39,8 @@ import DayTime
 -- srtkW -> thickness of the outline
 -- col   -> color of the stroke
 gLine :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
-gLine (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLine strkW col) (gLinePath strkW)
+gLine (bx,by) (ex,ey) z strkW col = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLine strkW col) (gLinePath strkW)
 
 -- Geometry of a hollow rect shape
 -- bx,by -> x y coordnates of the middle of the rect
@@ -47,7 +49,8 @@ gLine (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,z)) (drawLin
 -- srtkW -> thickness of the outline
 -- col   -> color of the stroke
 gRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
-gRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawRect col strkW) (rectPath strkW)
+gRect (bx,by) (ex,ey) z strkW col = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawRect col strkW) (rectPath strkW)
 
 -- Geometry of a filled rect shape
 -- bx,by -> x y coordnates of the middle of the rect
@@ -56,16 +59,30 @@ gRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawRec
 -- srtkW -> thickness of the outline
 -- col   -> color of the stroke and the fill
 gFullRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Geometry
-gFullRect (bx,by) (ex,ey) z strkW col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawFullRect col) fullRectPath
+gFullRect (bx,by) (ex,ey) z strkW col = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawFullRect col col) fullRectPath
+
+-- Geometry of a filled rect shape
+-- bx,by -> x y coordnates of the middle of the rect
+-- ex,ey -> scale of the rect in x and y direction
+-- z     -> plane in which the rect will be visible
+-- srtkW -> thickness of the outline
+-- col   -> color of the fill
+-- scol   -> color of the stroke
+gSFullRect :: P2 -> P2 -> Z -> StrokeWeight -> Col -> Col -> Geometry
+gSFullRect (bx,by) (ex,ey) z strkW col scol = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawFullRect col scol) fullRectPath
 
 gCirc :: P2 -> Diameter -> Z -> Col -> Geometry
 gCirc pos d = gEllipse pos (d,d) 
 
 gEllipse :: P2 -> P2 -> Z -> Col -> Geometry
-gEllipse (bx,by) (ex,ey) z col = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawEllipse col) ellipsePath
+gEllipse (bx,by) (ex,ey) z col = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawEllipse col) ellipsePath
 
 gSEllipse :: P2 -> P2 -> Z -> Col -> Col -> Geometry
-gSEllipse (bx,by) (ex,ey) z col scol = Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawSEllipse col scol) ellipsePath
+gSEllipse (bx,by) (ex,ey) z col scol = 
+  Geo (T (bx,by,z) (0,0,0) (ex,ey,0)) (drawSEllipse col scol) ellipsePath
 
 gSCirc  :: P2 -> Diameter -> Z -> Col -> Col -> Geometry
 gSCirc pos d = gSEllipse pos (d,d)
@@ -79,7 +96,7 @@ cube :: Transform -> StrokeWeight -> Col -> Geometry
 cube t strkW col = Geo t (drawCube col strkW) (cubePath strkW)
 
 fullCube :: Transform -> Col -> Geometry
-fullCube t col = Geo t (drawFullCube col) fullCubePath 
+fullCube t col = Geo t (drawFullCube col col) fullCubePath 
 
 cylinder :: Transform -> Col -> StrokeWeight -> Geometry
 cylinder t col sw = Geo t (drawCylinder col col sw) cylinderPath
@@ -112,16 +129,17 @@ drawRectInRange rangeFunction col strkW t dt (_,_,z)  | rangeFunction t z = retu
             rightUpper = (cx + sx/2, cy - sy/2)
 
 
-drawFullRect :: Col -> Transform -> DayTime -> P3 -> Draw
+drawFullRect :: Col -> Col -> Transform -> DayTime -> P3 -> Draw
 drawFullRect = drawFullRectInRange outOf2DRange
 
-drawFullCube :: Col -> Transform -> DayTime -> P3 -> Draw
+drawFullCube :: Col -> Col -> Transform -> DayTime -> P3 -> Draw
 drawFullCube = drawFullRectInRange outOf3DRange
 
-drawFullRectInRange :: (Transform -> Z -> Bool) -> Col -> Transform -> DayTime -> P3 -> Draw
-drawFullRectInRange rangeFunction col t dt (_,_,z) | rangeFunction t z = return ()
+drawFullRectInRange :: (Transform -> Z -> Bool) -> Col -> Col -> Transform -> DayTime -> P3 -> Draw
+drawFullRectInRange rangeFunction col scol t dt (_,_,z) | rangeFunction t z = return ()
       | otherwise = do
-        strokeFill $ colorForDayTime col dt
+        stroke $ colorForDayTime scol dt
+        fill $ colorForDayTime col dt
         strokeWeight 1
         rectMode Corners
         rect leftLower rightUpper         

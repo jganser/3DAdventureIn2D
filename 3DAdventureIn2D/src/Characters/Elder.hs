@@ -4,4 +4,6 @@ import Actor
 import Graphics.Proc
 
 elder :: (String,Actor)
-elder = ("elder", emptyActor)--todo
+elder = (name, emptyActor)--todo
+
+name = "elder"

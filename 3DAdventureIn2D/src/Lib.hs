@@ -7,17 +7,21 @@ import Graphics.Proc
 import Control.Concurrent
 import Constants
 import State
+import StateMachine
+import StateHelper
 import Levels
 import Drawable
 import Actor
-import CharacterSet hiding (size)
+import ObjectUtils (norm3, roundXY)
+import CharacterSet hiding (size, pos)
 import qualified CharacterSet as CS
 import DayTime
 import Data.List (union)
 import Prelude hiding (lines, Either(..))
 import Characters.Townpeople
-import Player
+import Player hiding (startTalking)
 import Characters.LastLift
+import qualified Characters.OldShaman as OldShaman
 import qualified Data.Vector as V
 import GameState as GS
 
@@ -52,16 +56,25 @@ draw st = do
         drawP (player st) playerPos     
         -- draw TextField
         writeStandard (currentText st) time
-        when (playerTalks st && timeToNextLine st < 0) $ writePressE time
+        when (playerTalks st && timeToNextLine st < 0) $ 
+            writePressE time
+        when (not (playerTalks st) && hengeIsActive st && 
+            isPlayerOnHengeLift (player st)) $ writePressH time
+        when (not (playerTalks st) && isPlayerOnLastLiftUp (player st)) $ 
+            writePressK time
+        when (not (playerTalks st) && isPlayerOnLastLiftDown (player st)) $ 
+            writePressL time
 
 update :: TimeInterval -> State -> Pio State
-update deltaT st = do
+update deltaT st = do    
     let t = timeToNextLine st
     let t_1 = if t >= 0 then  t - deltaT else t
     st_1 <- updateActorMovement deltaT st
     st_2 <- updatePlayerStandsOn st_1
     let st_3 = st_2 { timeToNextLine = t_1 }
-    return st_3
+    let st_4 = updateState st_3
+    st_5 <- updateFalling deltaT st_4
+    return st_5
 
 updatePlayerStandsOn :: State -> Pio State
 updatePlayerStandsOn st = do
@@ -80,6 +93,23 @@ updateActorMovement deltaT st = do
             let dir = aPos (GS.lookupActor n actors) - curActorPos
             return $ st { eventActors = actors, player = movePlayer dir p}
 
+updateFalling :: TimeInterval -> State -> Pio State
+updateFalling deltaT st = 
+    if not $ playerFalls st
+    then return st
+    else 
+        let p = player st
+            dir@(dx,dy,dz) = norm3 $ target p - pos p
+            v = 300 * deltaT
+            dist = dir * (v,v,v/10)
+            newPos = pos p + roundXY dist
+            newDir@(ndx,ndy,ndz) = norm3 $ target p - newPos
+            beyondGoal = (dx * ndx + dy * ndy + dz * ndz) <= 0
+            newP = if beyondGoal 
+                   then p { isFalling = False, pos = target p} 
+                   else movePlayer dist p
+        in  return $ st {player = newP }
+
 bgForDayTime :: DayTime -> Pio ()
 bgForDayTime daytime | daytime == Night = background black 
                      | otherwise = background white
@@ -88,6 +118,12 @@ data Dir = Up | Down | Left | Right deriving (Eq,Show)
 
 processKeys :: State -> Pio State
 processKeys st = 
+    if playerFalls st
+    then return st
+    else processPlayerInput st
+
+processPlayerInput :: State -> Pio State
+processPlayerInput st =
     if playerTalks st 
     then keepTalking st
     else movement st
@@ -118,11 +154,23 @@ writeStandard :: String -> DayTime -> Draw
 writeStandard text time = 
     let pText = PText text (80,900) 2 white black
     in  drawPText pText time
-      
+
+writePress :: Char -> DayTime -> Draw
+writePress char time = 
+    drawPText (PText ("--- Press "++ [char] ++ "---") (650,930) 2 white black) time
+
+
 writePressE :: DayTime -> Draw
-writePressE time = 
-    drawPText (PText "--- Press E ---" (650,930) 2 white black) time
+writePressE = writePress 'E'
+
+writePressH :: DayTime -> Draw
+writePressH = writePress 'H'
+
+writePressK :: DayTime -> Draw
+writePressK = writePress 'K' 
     
+writePressL :: DayTime -> Draw
+writePressL = writePress 'L'
 
 movement :: State -> Pio State
 movement st = do
@@ -138,8 +186,13 @@ movement st = do
         SpecialKey KeyLeft  -> return $ moveOrStartTalking playerSpeed Left st
         Char 'a'            -> return $ moveOrStartTalking playerSpeed Left st
         Char 'h'            -> return $ mapActor "hengeLift" sendHengeLiftUp st
-        Char 'l'            -> return $ mapActor "lastLift" sendUp st
-        Char 'k'            -> return $ mapActor "lastLift" sendDown st
+        Char 'l'            -> do
+            let st_1 = if (isInOldShaman3 st) then mapActor OldShaman.name OldShaman.moveWithPlatform st else st
+            return $ mapActor "lastLift" sendUp st_1
+        Char 'k'            -> do
+            if isInOldShaman3 st || isInOldShaman4 st
+            then return st -- don't let the player fiddle with the platform when the oldshaman is walking
+            else return $ mapActor "lastLift" sendDown st
         _ -> return st
 
 moveOrStartTalking :: Float -> Dir -> State -> State
@@ -161,7 +214,7 @@ startTalking pos st =
       (n,na,nb) = onAnyTalkingEventActor pos ea 
       p_2 = if nb then p_1 {isTalking = True, dialog = textToSay na} else p_1
       na_1 = if nb then na {textToSay = [], finishedTalking = True} else na
-      ea_1 = if nb then replace (n,na_1) ea else ea
+      ea_1 = if nb then GS.replace (n,na_1) ea else ea
   
 
 posOf :: Float -> Dir -> State -> P3

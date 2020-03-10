@@ -1,7 +1,11 @@
-module Characters.LastLift (lastLift, hengeLift, sendHengeLiftUp, sendUp, sendDown) where
+module Characters.LastLift (
+    lastLift, hengeLift, sendHengeLiftUp, sendUp, sendDown,
+    lastLiftName, hengeLiftName, lastLiftUp, lastLiftDown
+    ) where
 
 import Actor
 import Geometry
+import Drawable
 import Graphics.Proc
 import Objects hiding (moveTo)
 import ObjectUtils
@@ -10,7 +14,9 @@ import DayTime
 import Constants
 
 lastLift :: (String,Actor)
-lastLift = (,) "lastLift" $ A (fullCube (T lastLiftUp (0,0,0) lastLiftSize) green) idle True False False [] False
+lastLift = (,) lastLiftName $ A (fullCube (T lastLiftUp (0,0,0) lastLiftSize) green) idle True False False [] False
+
+lastLiftName = "lastLift"
 
 sendUp :: Actor -> Actor
 sendUp = sendToWithIdle lastLiftUp
@@ -22,10 +28,12 @@ sendToWithIdle :: P3 -> Actor -> Actor
 sendToWithIdle = sendTo idle liftSpeed
 
 sendTo :: Tick -> Float -> P3 -> Actor -> Actor
-sendTo newTick speed target a = a { actorTick = moveTo newTick target speed}
+sendTo newTick speed target a = a { actorTick = moveTo newTick [target] speed}
 
 hengeLift :: (String,Actor)
-hengeLift = (,) "hengeLift" $ A (cylinder (T hengeLiftLow (0,0,0) hengeLiftSize) darkSlateGray 1) idle True False False [] False
+hengeLift = (,) hengeLiftName $ A (cylinder (T hengeLiftLow (0,0,0) hengeLiftSize) darkSlateGray 1) idle True False False [] False
+
+hengeLiftName = "hengeLift"
 
 sendHengeLiftUp :: Actor -> Actor
 sendHengeLiftUp = sendToWithIdle hengeLiftUp

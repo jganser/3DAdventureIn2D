@@ -2,6 +2,7 @@ module ObjectUtils where
 
 import Graphics.Proc
 import Geometry
+import Drawable
 
 type Z = Float
 type StrokeWeight = Float

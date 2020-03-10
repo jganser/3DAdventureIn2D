@@ -1,4 +1,8 @@
-module Characters.OldShaman (oldShaman) where
+module Characters.OldShaman 
+  (
+    oldShaman, name, goToPlatform, goToEdge, lastDialog,
+    moveWithPlatform, isInFirstTarget, isInSecondTarget
+  ) where
 
 import Actor
 import Geometry
@@ -8,10 +12,13 @@ import ObjectUtils
 import Constants
 import DayTime
 import Colors
+import Drawable
 
 
-oldShaman :: (String,Actor)--todo
-oldShaman = ("oldShaman", oldShamanActor) 
+oldShaman :: (String,Actor)
+oldShaman = (name , oldShamanActor) 
+
+name = "oldShaman"
 
 oldShamanActor :: Actor
 oldShamanActor = talkingCharacter oldShamanGeo firstDialog
@@ -22,6 +29,15 @@ oldShamanGeo = gSCirc (79,294) playerSize 10 azure purple
 -- Pathing
 -- the path the old shaman shall take
 
+goToPlatform :: Actor -> Actor
+goToPlatform a = a { actorTick = moveToAndIdle shamansFirstPath 85}
+
+goToEdge :: Actor -> Actor
+goToEdge a = a { actorTick = moveToAndIdle shamansSecondPath 75}
+
+moveWithPlatform :: Actor -> Actor
+moveWithPlatform a = a {actorTick = moveToAndIdle [(835,300,20)] 40}
+
 shamansFirstPath :: [P3]
 shamansFirstPath = [
     (79,294,10)
@@ -29,14 +45,27 @@ shamansFirstPath = [
   , (400,100,10) -- right into the circ
   , (400,230,10) -- down
   , (255,230,10) -- left
-  , (270,300,10) -- lposition on platform in the middle realm
+  , (270,230,10) -- on plaza platform
+  , firstPathTarget -- position on platform in the middle realm
   ]
 
 shamansSecondPath :: [P3]
 shamansSecondPath = [
     (835,300,20) -- start on the platform when it is in the upper realm
-  , (922,300,20)
+  , (922,300,20) -- going to the edge
   ]
+
+firstPathTarget:: P3
+firstPathTarget = (270,300,10)
+
+secondPathTarget:: P3
+secondPathTarget = (922,300,20)
+
+isInFirstTarget :: Actor -> Bool
+isInFirstTarget = (==) firstPathTarget . aPos
+
+isInSecondTarget :: Actor -> Bool
+isInSecondTarget = (==) secondPathTarget . aPos
 
 -- Dialogs
 

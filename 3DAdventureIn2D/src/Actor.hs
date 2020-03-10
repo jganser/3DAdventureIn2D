@@ -2,9 +2,9 @@ module Actor where
 
 import Drawable
 import Geometry
+import DayTime
 import ObjectUtils
-import Graphics.Proc (P3)
-
+import Graphics.Proc (P3, Draw)
 
 type Tick = Float -> Actor -> Actor
 
@@ -20,6 +20,14 @@ data Actor = A {
   , textToSay :: [String]
   , blocksPlayer :: Bool
 }
+
+instance Drawable Actor where
+  drawAt z ppos = drawAt z ppos . geo
+  boundingBox = boundingBox . geo
+  path z = path z . geo
+  newDraw f a = 
+    let g = newDraw f $ geo a
+    in  a { geo = g}
 
 instance Tickable Actor where
   tick dt a = (actorTick a) dt a
@@ -75,8 +83,12 @@ idle = const id
 newTick :: Tick -> Actor -> Actor
 newTick f a = a {actorTick = f}
 
-moveTo :: Tick -> P3 -> Float -> Tick
-moveTo finishedTick target speed deltaT a = a {geo = newGeo, actorTick = newTick}
+
+
+-- Actor Transformations
+moveTo :: Tick -> [P3] -> Float -> Tick
+moveTo finishedTick [] _ _ a = a { actorTick = finishedTick}
+moveTo finishedTick (target:ts) speed deltaT a = a {geo = newGeo, actorTick = newTick}
   where
     pos = aPos a
     dir@(dx,dy,dz) = norm3 $ target - pos
@@ -88,8 +100,11 @@ moveTo finishedTick target speed deltaT a = a {geo = newGeo, actorTick = newTick
     beyondGoal = (dx * ndx + dy * ndy + dz * ndz) <= 0
     newGeo = if beyondGoal then newGeoPos target (geo a) else newGeoPos newPos (geo a)
     newTick = if beyondGoal 
-              then finishedTick
-              else moveTo finishedTick target speed
+              then moveTo finishedTick (tail ts) speed
+              else moveTo finishedTick (target:ts) speed
+
+moveToAndIdle :: [P3] -> Float -> Tick
+moveToAndIdle = moveTo idle
 
 addText :: [String] -> Actor -> Actor
 addText [] a = a
@@ -102,9 +117,6 @@ talk a | not (finishedTalking a) =
   else (Just (head (textToSay a)), a {textToSay = tail (textToSay a)})
   | otherwise = (Nothing, a)
 
-moveToAndIdle :: P3 -> Float -> Tick
-moveToAndIdle = moveTo idle
-
 -- idleFor x seconds
 idleFor :: Float -> Tick -> Tick
 idleFor x nextTick deltaT a = a { actorTick = newTick}
@@ -115,7 +127,7 @@ idleFor x nextTick deltaT a = a { actorTick = newTick}
 moveBetweenAndIdleFor :: Float -> [P3] -> Float -> Tick
 moveBetweenAndIdleFor x points speed = idleFor x $ moveToNext points
   where
-    moveToNext points = moveTo (idleFor x (moveToNext newOrder)) (head newOrder) speed
+    moveToNext points = moveTo (idleFor x (moveToNext newOrder)) [head newOrder] speed
       where
         newOrder = tail points ++ [head points]
 
@@ -127,11 +139,6 @@ lookupActor n ((tn,a):as)
 
 replaceActor :: (String,Actor) -> [(String,Actor)] -> [(String,Actor)]
 replaceActor (n,a) = map (\(tn,an) -> if tn == n then (n,a) else (tn,an))
-    
-instance Drawable Actor where
-    drawAt daytime playerPos a = drawAt daytime playerPos (geo a)
-    path z a = path z (geo a)
-    boundingBox = boundingBox . geo
 
 allActorPath :: Float -> [Actor] -> Path
 allActorPath z = concatMap $ path z

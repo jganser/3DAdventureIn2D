@@ -6,6 +6,12 @@ import Data.Vector (Vector)
 import qualified Data.Vector as V
 
 
+data Transform = T {
+    transition :: P3, 
+    rotation :: P3, 
+    scaling :: P3
+  } deriving (Eq, Show)
+
 data BoundingBox = BB {
     x_low :: Float, -- x low value
     x_high :: Float,-- x high value
@@ -22,6 +28,7 @@ class Drawable a where
     drawAt :: DayTime -> P3 -> a -> Draw
     path :: Float -> a -> Path
     boundingBox :: a -> BoundingBox
+    newDraw :: (Transform -> DayTime -> P3 -> Draw) -> a -> a
 
 type Path = [Field]
 type Field = P2

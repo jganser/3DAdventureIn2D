@@ -3,6 +3,7 @@ module Levels where
 import Objects
 import Constants
 import Geometry
+import Drawable
 import Graphics.Proc
 import Characters.LastLift
 import Characters.OldShaman
@@ -41,7 +42,7 @@ level1 = [
     , gCirc (460,120) 50 0 gold -- Forum Plaza                           x = 435 - 485, y =  95 - 145
     , gEllipse (40,100) (60,120) 0 cadetBlue -- upper left hud
     , gCirc (500, 460) 80 0 firebrick -- house of the shaman
-    , gFullRect (840,520) (80,60) 0 1 firebrick -- fullrect under boss
+    , gSFullRect (840,520) (80,60) 0 1 green firebrick -- fullrect under boss, flower shop
     , gCirc (570,600) 20 0 cadetBlue -- low left hud
     , gEllipse (730,600) (60,40) 0 cadetBlue -- upper left hud           x = 700 - 760, y =  580 - 620
     ]
