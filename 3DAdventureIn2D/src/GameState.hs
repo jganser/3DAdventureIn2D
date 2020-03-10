@@ -15,6 +15,7 @@ import Actor hiding (lookupActor)
 import Drawable
 import Graphics.Proc (P3)
 import Prelude hiding (lookup,map)
+import qualified Prelude as Pre (map)
 
 class EventHolder a where
   eventState :: a -> Maybe EventState
@@ -57,6 +58,10 @@ instance EventHolder GameState where
 newEventState = 
   ES False False False False False False False False 
       False False False False False False
+
+
+eventStateAsList (ES p1 omi hf sm o1 o2 o3 o4 pim pafom ep som p2 pk) = [p1,omi,hf,sm,o1,o2,o3,o4,pim,pafom,ep,som,p2,pk]
+eventStateSum = sum . Pre.map (\b -> case b of {True -> 1; False -> 0}) . eventStateAsList
 
 type EventActors = EventActor (String,Actor) 
 

@@ -8,7 +8,7 @@ import Constants
 import Graphics.Proc
 
 guard :: (String,Actor)
-guard = (name, emptyActor)--todo
+guard = (name, guardActor)
 
 name = "guard"
 
@@ -16,10 +16,10 @@ guardActor :: Actor
 guardActor = talkingCharacter guardGeometry guardDialog
 
 guardGeometry :: Geometry
-guardGeometry = gSCirc (79,294) (playerSize+2) 10 darkSlateGray gray 
+guardGeometry = gSCirc (79,294) (playerSize+3) 0 darkSlateGray gray 
 
 moveGuard :: Actor -> Actor
-moveGuard a = a {actorTick = moveToAndIdle [(830,293,0)] 80}
+moveGuard a = a {actorTick = moveToAndIdle [(830,300,0)] 80}
 
 guardDialog :: [String]
 guardDialog = [

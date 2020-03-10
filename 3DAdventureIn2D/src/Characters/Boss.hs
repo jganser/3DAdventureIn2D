@@ -41,7 +41,7 @@ drawBoss mouthClosed t dt (px,py,pz)
         line rightUpper rightLower
         line rightLower leftLower
         -- mouth --TODO
-        when mouthClosed $ line (fst leftLower, leftFstThirdUp) (fst leftLower, leftSndThirdUp)
+        when mouthClosed $ line (fst leftLower, leftFstSixthdUp) (fst leftLower, left5SixthUp)
         -- round stuff
         strokeWeight 1
         -- eyes
@@ -64,6 +64,11 @@ drawBoss mouthClosed t dt (px,py,pz)
             leftFstThirdUp = third + snd leftLower
             leftSndThirdUp :: Float
             leftSndThirdUp = 2*third + snd leftLower
+            sixth = (snd leftUpper - snd leftLower)/6
+            leftFstSixthdUp :: Float
+            leftFstSixthdUp = sixth + snd leftLower
+            left5SixthUp :: Float
+            left5SixthUp = 5*sixth + snd leftLower
             eyeRadius :: Float
             eyeRadius = (leftFstThirdUp - snd leftLower)/2
             --lowerEyeMid = (fst leftLower, eyeRadius + snd leftLower)

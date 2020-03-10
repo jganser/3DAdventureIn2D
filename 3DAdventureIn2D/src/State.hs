@@ -13,7 +13,8 @@ import Player
 import Graphics.Proc
 import qualified Data.Vector as V
 import GameState hiding (replace,lookupActor)
-import qualified GameState as GS 
+import qualified GameState as GS
+import Data.Maybe
 
 
 -- the actors shall be disjoint distributed over the 3 actor lists (unique occurence)
@@ -112,7 +113,7 @@ replace na st =
 dialogUpdate :: [String] -> State -> State
 dialogUpdate text st =
   let p = startTalkingText text $ player st 
-  in  st { player = p}
+  in  curTextUpdate $ st { player = p }
 
 dialogUpdateA :: Actor -> State -> State
 dialogUpdateA a = dialogUpdate (textToSay a) 
@@ -120,11 +121,24 @@ dialogUpdateA a = dialogUpdate (textToSay a)
 dialogUpdateN :: String -> State -> State
 dialogUpdateN name st = 
   let a    = lookupActor name st
-      a_1  = a { textToSay = []}      
+      a_1  = a { textToSay = [], finishedTalking = True}      
       st_1 = replace (name, a_1) st
   in  dialogUpdateA a st_1
   
+curTextUpdate :: State -> State
+curTextUpdate st = 
+    let (text, p) = nextTextLine $ player st
+    -- liftIO $ putStrLn $ "player after next Line: " ++ show p      
+    in  st { 
+        player = p, 
+        timeToNextLine = 0.2,
+        currentText = 
+            if hasNextLine p 
+            then text 
+            else standardText
+        }
 
+eventStateSum st | isEventSensitive st = GS.eventStateSum $ fromJust $ eventState st
 
 -- Layering
 addEventActors :: Float -> Layer -> State -> Layer

@@ -22,8 +22,8 @@ moveFemaleOutOfHouse :: State -> State
 moveFemaleOutOfHouse = 
   mapActor Female.name Female.moveFemaleOutOfHouse
 
-startDialog1 :: State -> State
-startDialog1 = dialogUpdateN Guard.name
+startGuardDialog :: State -> State
+startGuardDialog = dialogUpdateN Guard.name
 
 unlockGuardDialog2 :: State -> State
 unlockGuardDialog2 = 
@@ -47,7 +47,7 @@ unlockFlowerDialog =
 
 updateNewShamanTick :: State -> State
 updateNewShamanTick = 
-  mapActor NewShaman.name $ newTick NewShaman.moveAside
+  mapActor NewShaman.name NewShaman.moveAside
 
 sendOldShamanToPlatform :: State -> State
 sendOldShamanToPlatform = 
@@ -100,7 +100,8 @@ sendMonsterAway = mapActor Boss.name Boss.flee
 winGame :: State -> State
 winGame st = st { gameState = GS.GameWon}
 
-
+closeMonsterMouth :: State -> State
+closeMonsterMouth = mapActor Boss.name Boss.closeMouth
 
 -- Phase State Check Helper
 eaCheck :: (Actor -> Bool) -> (GS.EventActors -> (String,Actor)) ->
@@ -108,7 +109,8 @@ eaCheck :: (Actor -> Bool) -> (GS.EventActors -> (String,Actor)) ->
 eaCheck f g = f . snd . g . eventActors
 
 eaTalkCheck :: (GS.EventActors -> (String,Actor)) -> State -> Bool
-eaTalkCheck = eaCheck finishedTalking
+eaTalkCheck f st = eaCheck finishedTalking f st &&
+  (not . playerTalks) st 
 
 guardCheck :: State -> Bool
 guardCheck = eaTalkCheck GS.guard

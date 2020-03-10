@@ -23,7 +23,7 @@ import Player hiding (startTalking)
 import Characters.LastLift
 import qualified Characters.OldShaman as OldShaman
 import qualified Data.Vector as V
-import GameState as GS
+import GameState as GS hiding (eventStateSum)
 
 
 main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = update, procKeyPressed = processKeys }
@@ -35,7 +35,9 @@ setup = do
     normaltownfolk <- createAllTownPeople normalTownFolkPos
     let st_3 = st { staticActors = normaltownfolk }
     let st_4 = reduceLayerByBlockingStaticActors st_3
-    return st_4
+    let st_5 = startGuardDialog st_4
+    --liftIO $ putStrLn $ "player Dialog in setup after startDialog1: " ++ show (dialog (player st_4))
+    return st_5
 
 draw :: State -> Pio ()
 draw st = do     
@@ -67,12 +69,20 @@ draw st = do
 
 update :: TimeInterval -> State -> Pio State
 update deltaT st = do    
+    --liftIO $ putStrLn $ "EventState isInProlog: " ++ show (isInProlog st)
+    --liftIO $ putStrLn $ "Guardcheck: " ++ show (guardCheck st)
+    --liftIO $ putStrLn $ "GuardDialog: " ++ show (textToSay $ State.lookupActor "guard" st)
+    --liftIO $ putStrLn $ "EventState isInProlog2: " ++ show (isInProlog2 st)
+    
     let t = timeToNextLine st
     let t_1 = if t >= 0 then  t - deltaT else t
     st_1 <- updateActorMovement deltaT st
     st_2 <- updatePlayerStandsOn st_1
     let st_3 = st_2 { timeToNextLine = t_1 }
-    let st_4 = updateState st_3
+    let st_4 = updateState st_3     
+    let esum = State.eventStateSum st
+    let newEsum = State.eventStateSum st_4
+    when (esum < newEsum) $ liftIO $ putStrLn $ "newEventSum: " ++ show newEsum
     st_5 <- updateFalling deltaT st_4
     return st_5
 
@@ -133,22 +143,12 @@ keepTalking st =
   if timeToNextLine st > 0 then return st
   else do
     k <- key
+    --liftIO $ putStrLn $ "keepTalking key received. curText: " ++ show (currentText st)
+    --liftIO $ putStrLn $ "player Dialog in keepTalking: " ++ show (dialog (player st))
     case k of 
-        Char 'e' -> curTextUpdate st            
+        Char 'e' -> do
+            return $ curTextUpdate st            
         _  -> return st
-
-curTextUpdate :: State -> Pio State
-curTextUpdate st = do
-    let (text, p) = nextTextLine $ player st
-    -- liftIO $ putStrLn $ "player after next Line: " ++ show p      
-    return $ st { 
-        player = p, 
-        timeToNextLine = 0.2,
-        currentText = 
-            if hasNextLine p 
-            then text 
-            else standardText
-        }
 
 writeStandard :: String -> DayTime -> Draw 
 writeStandard text time = 
@@ -190,7 +190,7 @@ movement st = do
             let st_1 = if (isInOldShaman3 st) then mapActor OldShaman.name OldShaman.moveWithPlatform st else st
             return $ mapActor "lastLift" sendUp st_1
         Char 'k'            -> do
-            if isInOldShaman3 st || isInOldShaman4 st
+            if eventStateSum st == 8 || eventStateSum st == 9
             then return st -- don't let the player fiddle with the platform when the oldshaman is walking
             else return $ mapActor "lastLift" sendDown st
         _ -> return st
@@ -199,7 +199,7 @@ moveOrStartTalking :: Float -> Dir -> State -> State
 moveOrStartTalking speed dir st = 
     let nextPos = posOf speed dir st
         (st' , b) = startTalking nextPos st 
-    in  if b then st'
+    in  if b then curTextUpdate st'
         else newPos (onPath st nextPos) st
 
 startTalking :: P3 -> State -> (State, Bool)

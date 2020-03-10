@@ -31,8 +31,8 @@ drawShaman t daytime playerPos
 
 pathShaman = ellipsePath
 
-moveAside :: Tick
-moveAside = moveToAndIdle [shamanEnd] shamanSpeed
+moveAside :: Actor -> Actor
+moveAside a = a {actorTick = moveToAndIdle [shamanEnd] shamanSpeed}
 
 -- constants
 

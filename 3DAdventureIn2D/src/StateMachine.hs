@@ -8,12 +8,13 @@ import StateHelper
 import Constants
 import Graphics.Proc
 import GameState as GS
+import qualified Player
 
 
 
 
 updateState :: State -> State
-updateState = checkProlog1 . startDialog1
+updateState = checkProlog1
 
 phaseCheck :: (State -> Bool) -> (State -> Bool) -> (State -> State) -> (State -> State) -> State -> State
 phaseCheck phasePred phaseDonePred phaseDone nextPhaseToCheck st = 
@@ -102,19 +103,19 @@ setPhaseDone f g st
 setPrologDone1 :: State -> State
 setPrologDone1 = 
   setPhaseDone (\es -> es { prolog = True}) 
-    (moveFemaleOutOfHouse . unlockGuardDialog2)
+    (startGuardDialog . moveFemaleOutOfHouse . unlockGuardDialog2)
 
 setPrologDone2 :: State -> State
 setPrologDone2 = 
   setPhaseDone (\es -> es { prolog2 = True}) 
-    (moveGuard . moveFemale)
+    (dialogUpdate Player.sacrifice . moveGuard . moveFemale)
 
 setElderDone = 
   setPhaseDone (\es -> es { oldManInfo = True}) 
-    unlockShamanDialog
+    (closeMonsterMouth . unlockShamanDialog)
 setStoodOnPlatformDone = 
   setPhaseDone (\es -> es { stoodOnPlatform = True}) 
-    unlockFlowerDialog
+    (dialogUpdate Player.onPlatformWithoutFlowers . unlockFlowerDialog)
 setFlowerDone = 
   setPhaseDone (\es -> es { hasFlowers = True}) id
 setShamanMovedDone = 

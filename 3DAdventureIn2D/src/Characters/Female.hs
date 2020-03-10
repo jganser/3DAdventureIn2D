@@ -17,7 +17,7 @@ name = "female"
 
 femaleActor = talkingCharacter femaleGeo femaleDialog
 
-femaleGeo = gSCirc (112,334) 9 0 (rgb 255 192 203) ghostWhite
+femaleGeo = gSCirc (112,334) 8 0 (rgb 255 192 203) ghostWhite
 
 drawFemale p@(x,y,z) size player@(p1,p2,p3) 
   | p3 /= z = return ()

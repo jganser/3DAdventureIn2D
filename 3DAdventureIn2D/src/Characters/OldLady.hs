@@ -12,7 +12,7 @@ name = "oldLady"
 
 oldLadyActor = talkingCharacter oldLadyGeo oldLadyDialog1
 
-oldLadyGeo = gSCirc (875,500) 9 0 seaGreen azure
+oldLadyGeo = gSCirc (875,500) 8 0 seaGreen azure
 
 oldLadyDialog1 = [
     "Oldlady   : Hello dear! Welcome to my flower shop."

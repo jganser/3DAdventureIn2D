@@ -100,7 +100,7 @@ moveTo finishedTick (target:ts) speed deltaT a = a {geo = newGeo, actorTick = ne
     beyondGoal = (dx * ndx + dy * ndy + dz * ndz) <= 0
     newGeo = if beyondGoal then newGeoPos target (geo a) else newGeoPos newPos (geo a)
     newTick = if beyondGoal 
-              then moveTo finishedTick (tail ts) speed
+              then moveTo finishedTick ts speed
               else moveTo finishedTick (target:ts) speed
 
 moveToAndIdle :: [P3] -> Float -> Tick
@@ -112,7 +112,7 @@ addText text a = a { textToSay = textToSay a ++ text, finishedTalking = False}
 
 talk :: Actor -> (Maybe String, Actor)
 talk a | not (finishedTalking a) = 
-  if tail (textToSay a) == [] 
+  if textToSay a == [] 
   then (Just (head (textToSay a)), a {textToSay = [], finishedTalking = True})
   else (Just (head (textToSay a)), a {textToSay = tail (textToSay a)})
   | otherwise = (Nothing, a)
