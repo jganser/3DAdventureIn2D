@@ -164,7 +164,7 @@ keepTalking st =
 
 writeStandard :: String -> DayTime -> Draw 
 writeStandard text time = 
-    let pText = PText text (80,900) 2 white black
+    let pText = PText text (40,900) 2 white black
     in  drawPText pText time
 
 writePress :: Char -> DayTime -> Draw
