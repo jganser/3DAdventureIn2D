@@ -2,10 +2,10 @@ module Characters.Townpeople where
 
 import Actor
 import Graphics.Proc
-import System.Random (randomRIO)
 import Constants
 import Colors
 import Objects
+import System.Random (randomRIO)
 
 townpeople :: P3 -> Pio Actor
 townpeople (x,y,z) = do
