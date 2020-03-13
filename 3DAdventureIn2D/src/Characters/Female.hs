@@ -47,14 +47,22 @@ vomitTarget :: P3
 vomitTarget = (840,302,0)
 
 femaleDialog = [
-    "Beloved  : I can\'t believe you saved!"
+    "Beloved  : I can\'t believe you saved me!"
   , "Beloved  : You just came out of nowhere!"
+  , "Beloved  : Like out of thin air?!"
   , "Beloved  : I thought it was all over..."
   , "Beloved  : Waiting to die inside of this thing and all..."
-  , "Beloved  : Thank you! I don\'t care how you did!"
+  , "Beloved  : Was that the art vanishing?!"
+  , "Beloved  : How did you do it?"
   , "Hero     : True love, my dear."
+  , "Beloved  : Oh come on. I don\'t care how you did anymore!"  
+  , "Beloved  : Thank you!"
   , "Beloved  : Oh, I love you! Smoothtalker..."
   , "Hero     : I love you, too."
   , "Hero     : But my dear I have to say, it was quite the journey!"
-  --todo EPILOG
+  , "Hero     : I went all the way \'up\' and met the old shaman!"
+  , "Hero     : But to make it short:"
+  , "Hero     : I had to take a path that was a non straight line!"
+  , "Hero     : It wasn\'t even flat there anymore."
+  , "Hero     : But enough of it, let\'s go home and enjoy our freedom!"    
   ]

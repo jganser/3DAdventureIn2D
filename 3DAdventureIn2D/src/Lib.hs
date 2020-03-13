@@ -199,8 +199,6 @@ keepTalking st =
   if timeToNextLine st > 0 then return st
   else do
     k <- key
-    --liftIO $ putStrLn $ "keepTalking key received. curText: " ++ show (currentText st)
-    --liftIO $ putStrLn $ "player Dialog in keepTalking: " ++ show (dialog (player st))
     case k of 
         Char 'e' -> do
             return $ curTextUpdate st            

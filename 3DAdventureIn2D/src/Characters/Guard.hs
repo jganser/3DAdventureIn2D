@@ -34,7 +34,7 @@ guardDialog = [
 
 guardDialog2 :: [String]
 guardDialog2 = [
-     "Hero      : I know that the lottery was fair, but still..."
+    "Hero      : I know that the lottery was fair, but still..."
   , "Guard     : I hate to do this. But we really need to go now."
   , "Beloved   : Oh, how much I love you. I need to go! To save the village."
   , "Beloved   : Live, for my sake, live for us both."

@@ -54,13 +54,12 @@ hasNextLine :: Player -> Bool
 hasNextLine = (/=) [] . dialog
 
 nextTextLine :: Player -> (String,Player)
-nextTextLine p = (nextLine, p_2)
+nextTextLine p = if hasNextLine p then (nextLine, p_1) else (nextLine, stopTalking p)
   where
     text = dialog p
     nextLine = if text == [] then "---> No Dialog remains <---" else head text
     remainingText = drop 1 text
     p_1 = p { dialog = remainingText}
-    p_2 = if hasNextLine p_1 then p_1 else stopTalking p_1
   
 updatePlayerOnActor :: Player -> EventActors -> Player
 updatePlayerOnActor p@(P (Just n) _ xyz _ _ _ _) ea = 
@@ -105,6 +104,8 @@ sacrifice = [
   , "Hero      : Maybe one of the elders knows about it."
   , "Hero      : They live in the round natural huts. Left of the big plaza."
   , "Hero      : Behind the main platform."
+  , "Hero      : Or maybe I could just take the straight line."
+  , "Hero      : And fight the monster head on for her..."
   ]
 
 onPlatformWithoutFlowers :: [String]

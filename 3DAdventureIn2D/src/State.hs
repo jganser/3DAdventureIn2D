@@ -134,14 +134,16 @@ curTextUpdate st =
     -- liftIO $ putStrLn $ "player after next Line: " ++ show p      
     in  st { 
         player = p, 
-        timeToNextLine = 0.2,
+        timeToNextLine = 0.4,
         currentText = 
-            if hasNextLine p 
+            if isTalking p
             then text 
             else standardText
         }
 
-eventStateSum st | isEventSensitive st = GS.eventStateSum $ fromJust $ eventState st
+eventStateSum st 
+  | isEventSensitive st = GS.eventStateSum $ fromJust $ eventState st
+  | otherwise = 0
 
 -- Layering
 addEventActors :: Float -> Layer -> State -> Layer

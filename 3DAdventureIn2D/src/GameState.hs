@@ -45,12 +45,15 @@ data EventState = ES {
 instance EventHolder GameState where
   eventState GameOver = Nothing
   eventState GameWon = Nothing
+  eventState Start = Nothing
   eventState (Running es) = Just es
   isEventSensitive GameOver = False
   isEventSensitive GameWon = False
+  isEventSensitive Start = False
   isEventSensitive (Running _) = True
   updateEventState GameOver _ = GameOver
   updateEventState GameWon  _ = GameWon
+  updateEventState Start _ = Start
   updateEventState (Running _) es = Running es
 
 --     1     2    3     4      5    6     7      8    

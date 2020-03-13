@@ -31,7 +31,6 @@ nextCol i = (!!) townColors $ mod (i+1) $ length townColors
 
 townDialog :: [String]
 townDialog = [
-  --"Hero      :"
     "Townwoman : Leave me alone."
   , "Townman   : The thing with the monster is such a shame..."
   , "Townkid   : Everybody is talking about the monster. I hate it."

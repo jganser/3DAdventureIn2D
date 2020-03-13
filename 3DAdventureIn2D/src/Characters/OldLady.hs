@@ -23,8 +23,7 @@ oldLadyDialog1 = [
   ]
 
 oldLadyDialog2 = [
-    "Hero      : Hello, old lady.",
-    "Hero      : I am looking for cues about the vanishing.",
+    "Hero      : Ok, I am looking for cues about the vanishing.",
     "Hero      : The henge, where the rituals take place...",
     "Oldlady   : Keep talking, I haven\'t heard your question yet.",
     "Hero      : It seems like there were flowers sacrificed in the old times.",
@@ -37,7 +36,7 @@ oldLadyDialog2 = [
     "Oldlady   : How insensitive of me, letting my bad mood out on you.",
     "Oldlady   : Ok, I will tell you what I know.",
     "Oldlady   : About the old days how you called them, my youth.",
-    "Oldlady   : At them time we had this dazzling, handsome shaman.",
+    "Oldlady   : At that time we had this dazzling, handsome shaman.",
     "Oldlady   : But even though he was handsome he was never proud.",
     "Oldlady   : His father was a farmer you see, quite the modest background.",
     "Oldlady   : Where were I? What was I wanted to tell you?",

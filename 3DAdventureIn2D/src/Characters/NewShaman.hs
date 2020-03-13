@@ -43,7 +43,7 @@ shamanEnd :: (Float,Float,Float)
 shamanEnd = (477,465,0)
 
 shamanSpeed :: Float
-shamanSpeed = 8
+shamanSpeed = 20
 
 -- Text To Say
 addShamansText :: Actor -> Actor
@@ -62,7 +62,9 @@ shamansText2 = [
   , "Shaman    : Ofcourse you do... I don\'t want to crush your hopes but..."
   , "Shaman    : I wasn\'t able to find the path of the old shaman."
   , "Shaman    : I never found out how to vanish in the stonehenge."
-  , "Shaman    : Good luck, maybe you will find the grace of the totems."
+  , "Shaman    : Or how to travel the otherworlds with my physical body."
+  , "Shaman    : But good luck to you."
+  , "Shaman    : Maybe you will find the grace of the totems."
   , "Shaman    : Who knows, it may be your fate to learn the art of vanishing!"
   , "Shaman    : To walk the otherworld!"
   , "Shaman    : I really hope it is. For you and for her..."
