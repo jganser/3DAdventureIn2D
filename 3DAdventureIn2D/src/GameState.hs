@@ -22,7 +22,7 @@ class EventHolder a where
   isEventSensitive :: a -> Bool
   updateEventState :: a -> EventState -> a 
 
-data GameState = Running EventState | GameOver | GameWon deriving (Eq, Ord, Show)
+data GameState = Running EventState | GameOver | GameWon | Start deriving (Eq, Ord, Show)
 
 data EventState = ES {
     prolog :: Bool,                         --   1

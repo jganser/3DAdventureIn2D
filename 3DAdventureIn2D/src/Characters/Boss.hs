@@ -19,10 +19,10 @@ bossTick = idle --Constant Tick
 name = "boss"
 
 bossT :: Transform -> Actor
-bossT t = A (Geo t (drawBoss False) fullCubePath) bossTick  False True False [] True --TODO maybe fullCubePath is not suited that well | TODO fill text
+bossT t = A (Geo t (drawBoss False) fullCubePath) bossTick  False True False [] False 
 
 closeMouth :: Actor -> Actor
-closeMouth = newDraw (drawBoss True)
+closeMouth a = let a_1 = newDraw (drawBoss True) a in a_1 { blocksPlayer = True}
 
 vomit :: Actor -> Actor
 vomit = newDraw drawBossWithoutMouth 
@@ -34,13 +34,15 @@ drawBoss :: Bool -> Transform -> DayTime -> P3 -> Draw
 drawBoss mouthClosed t dt (px,py,pz) 
   | outOf3DRange t pz = return ()
   | otherwise = do 
-        stroke $ colorForDayTime black dt
-        strokeWeight 6
+        stroke $ colorForDayTime darkSlateGray dt
+        fill crimson
+        rect leftLower rightUpper
+        strokeWeight 4
         -- corpus
         line leftUpper rightUpper
         line rightUpper rightLower
         line rightLower leftLower
-        -- mouth --TODO
+        -- mouth 
         when mouthClosed $ line (fst leftLower, leftFstSixthdUp) (fst leftLower, left5SixthUp)
         -- round stuff
         strokeWeight 1

@@ -22,6 +22,7 @@ import Characters.Townpeople
 import Player hiding (startTalking)
 import Characters.LastLift
 import qualified Characters.OldShaman as OldShaman
+import qualified Characters.Boss as Boss
 import qualified Data.Vector as V
 import GameState as GS hiding (eventStateSum)
 
@@ -31,26 +32,50 @@ main = runProc $ def { procSetup = setup, procDraw = draw, procUpdateTime = upda
 setup :: Pio State
 setup = do
     size (width, height)
-    let st = startState
+    return startState
+
+gameSetup :: Pio State
+gameSetup = do
+    let st = freshRunningState
     normaltownfolk <- createAllTownPeople normalTownFolkPos
     let st_3 = st { staticActors = normaltownfolk }
     let st_4 = reduceLayerByBlockingStaticActors st_3
     let st_5 = startGuardDialog st_4
-    --liftIO $ putStrLn $ "player Dialog in setup after startDialog1: " ++ show (dialog (player st_4))
     return st_5
 
 draw :: State -> Pio ()
 draw st = 
-    if gameState st == GameWon 
-    then drawWinningScreen st
-    else drawRunning st
+    case gameState st of 
+        GameWon -> drawWinningScreen
+        Start -> drawStartingScreen
+        GameOver -> drawGameLost
+        _ -> drawRunning st
     
-drawWinningScreen :: State -> Pio ()
-drawWinningScreen = const $ do
-    let pText = PText "Congrats to winning!" (100,400) 6 white black
+drawWinningScreen :: Pio ()
+drawWinningScreen = do
+    let pText = PText "Congrats to winning!" (100,400) 6 black white
+    let pText2 = PText "Press E To Restart" (150,600) 4 black white
     bgForDayTime Night
-    drawPText pText Night
+    drawPText pText Day
+    drawPText pText2 Day
 
+drawStartingScreen :: Pio ()
+drawStartingScreen = do
+    let pText = PText "A Flatlanders" (160,300) 6 black white
+    let pText2 = PText "Adventure" (200,450) 6 black white
+    let pText3 = PText "Press E To Restart" (150,600) 4 black white
+    bgForDayTime Night
+    drawPText pText Day
+    drawPText pText2 Day
+    drawPText pText3 Day
+
+drawGameLost ::  Pio ()
+drawGameLost = do
+    let pText = PText "Game Lost" (100,400) 6 black white
+    let pText2 = PText "Press E To Restart" (150,600) 4 black white
+    bgForDayTime Night
+    drawPText pText Day
+    drawPText pText2 Day
 
 drawRunning :: State -> Pio ()
 drawRunning st = do            
@@ -61,7 +86,7 @@ drawRunning st = do
     let playerPos = dotpos st
     -- draw the scene
         -- draw the background for the current daytime
-    bgForDayTime time
+    bgForDayTime Night
         -- draw simple gemoetries if they are visible, with regards to daytime
     mapM_ (drawAt time playerPos) geos
         -- draw actors if they are visible, with regards to daytime
@@ -81,22 +106,29 @@ drawRunning st = do
         writePressL time
 
 update :: TimeInterval -> State -> Pio State
-update deltaT st = do    
-    --liftIO $ putStrLn $ "EventState isInProlog: " ++ show (isInProlog st)
-    --liftIO $ putStrLn $ "Guardcheck: " ++ show (guardCheck st)
-    --liftIO $ putStrLn $ "GuardDialog: " ++ show (textToSay $ State.lookupActor "guard" st)
-    --liftIO $ putStrLn $ "EventState isInProlog2: " ++ show (isInProlog2 st)    
+update deltaT st = case gameState st of
+    Running _ -> updateRunningGame deltaT st
+    _ -> return st
+
+updateRunningGame :: TimeInterval -> State -> Pio State
+updateRunningGame dt st = 
+    if Just Boss.name == standsOnActor (player st) && State.eventStateSum st < 8
+    then return $ st { gameState = GameOver}
+    else updateRunning dt st
+
+updateRunning :: TimeInterval -> State -> Pio State
+updateRunning deltaT st = do    
     let t = timeToNextLine st
     let t_1 = if t >= 0 then  t - deltaT else t
     st_1 <- updateActorMovement deltaT st
     st_2 <- updatePlayerStandsOn st_1
-    let st_3 = st_2 { timeToNextLine = t_1 }
-    let st_4 = updateState st_3     
+    let st_3 = st_2 { timeToNextLine = t_1 }    
+    let st_5 = updateState st_3
     let esum = State.eventStateSum st
-    let newEsum = State.eventStateSum st_4
+    let newEsum = State.eventStateSum st_5
     when (esum < newEsum) $ liftIO $ putStrLn $ "newEventSum: " ++ show newEsum
-    st_5 <- updateFalling deltaT st_4
-    return st_5
+    st_6 <- updateFalling deltaT st_5
+    return st_6
 
 updatePlayerStandsOn :: State -> Pio State
 updatePlayerStandsOn st = do
@@ -139,7 +171,19 @@ bgForDayTime daytime | daytime == Night = background black
 data Dir = Up | Down | Left | Right deriving (Eq,Show)
 
 processKeys :: State -> Pio State
-processKeys st = 
+processKeys st = case gameState st of
+    Running _ -> processRunningKeys st
+    _ -> startGame st
+
+startGame :: State -> Pio State
+startGame st = do
+    k <- key
+    case k of 
+        Char 'e' -> gameSetup
+        _ -> return st
+
+processRunningKeys :: State -> Pio State
+processRunningKeys st = 
     if playerFalls st
     then return st
     else processPlayerInput st
@@ -164,12 +208,12 @@ keepTalking st =
 
 writeStandard :: String -> DayTime -> Draw 
 writeStandard text time = 
-    let pText = PText text (40,900) 2 white black
+    let pText = PText text (40,900) 2 black white
     in  drawPText pText time
 
 writePress :: Char -> DayTime -> Draw
 writePress char time = 
-    drawPText (PText ("--- Press "++ [char] ++ "---") (650,930) 2 white black) time
+    drawPText (PText ("--- Press "++ [char] ++ "---") (650,930) 2 black white) time
 
 
 writePressE :: DayTime -> Draw

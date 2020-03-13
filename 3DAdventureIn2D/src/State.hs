@@ -56,11 +56,14 @@ emptyState = ST
   standardText
   0
 
+startState :: State
+startState = let st = emptyState in st {gameState = Start}
+
 emptyLayer :: Layer
 emptyLayer = V.replicate (round width) (V.replicate (round height) False)
 
-startState :: State
-startState = 
+freshRunningState :: State
+freshRunningState = 
   let st = emptyState
       st' = foldl (\state obj -> addObject obj state) st allObjects
   in  st'

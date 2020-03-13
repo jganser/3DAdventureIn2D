@@ -29,6 +29,7 @@ import Geometry
 import Actor
 import ObjectUtils
 import DayTime
+import Colors
 
 -- 2D Objects
 
@@ -232,7 +233,7 @@ drawHenge t@(T (x,y,z) r (sx,sy,sz)) dt p@(px,py,_) = do
         radius = sx/24
         inXrange = x + sx/4 >= px && x - sx/4 <= px 
         inYrange = y + sy/4 >= py && y - sy/4 <= py
-        (col,scol) = if inXrange && inYrange then (white,black) else (black,black)
+        (col,scol) = if inXrange && inYrange then (white,darkSlateGray) else (darkSlateGray,darkSlateGray)
 
 -- Path functions
 

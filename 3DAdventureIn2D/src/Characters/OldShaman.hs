@@ -46,8 +46,8 @@ shamansFirstPath = [
   , (80,100,10)  -- straight up into the middle
   , (400,100,10) -- right into the circ
   , (400,230,10) -- down
-  , (255,230,10) -- left
-  , (270,230,10) -- on plaza platform
+  , (255,230,10) -- left ono plaza platform
+  , (255,300,10) -- down from plaza platform
   , firstPathTarget -- position on platform in the middle realm
   ]
 

@@ -16,10 +16,10 @@ guardActor :: Actor
 guardActor = talkingCharacter guardGeometry guardDialog
 
 guardGeometry :: Geometry
-guardGeometry = gSCirc (79,294) (playerSize+3) 0 darkSlateGray gray 
+guardGeometry = gSCirc (79,294) (playerSize+2) 0 darkSlateGray gray 
 
 moveGuard :: Actor -> Actor
-moveGuard a = a {actorTick = moveToAndIdle [(830,300,0)] 80}
+moveGuard a = a {actorTick = moveToAndIdle [(830,295,0)] 80}
 
 guardDialog :: [String]
 guardDialog = [

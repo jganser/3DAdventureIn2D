@@ -2,16 +2,13 @@ module Constants where
 
 
 width :: Float
-width = 1240.0
+width = 1920.0
 
 height :: Float
-height = 1060.0
+height = 1040.0
 
 playerStart :: (Float,Float,Float)
 playerStart = (100,350,0)
---playerStart = hengePos
---playerStart = lastLiftUp
---playerStart = (460,440,0) -- right above shaman
 
 playerSize :: Float
 playerSize = 10
