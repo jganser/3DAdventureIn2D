@@ -34,7 +34,7 @@ drawPlayer :: P3 -> Draw
 drawPlayer = drawPlayerWithSize playerSize
 
 drawPlayerWithSize :: Float -> P3 -> Draw
-drawPlayerWithSize size pos = do
+drawPlayerWithSize size pos = do  
   stroke $ azure
   fill $ blue
   strokeWeight 1
