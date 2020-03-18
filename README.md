@@ -2,7 +2,7 @@
 
 **Algorithmic Thinking - Non Straight Lines**
 
-![screenshot1](tree/master/screenshots/Start.PNG)
+![screenshot1](screenshots/Start.PNG)
 
 Als ich von dem Thema *Non Straight Lines* erfuhr, gingen meine ersten Gedanken um gerade Linien und ihre Eigenschaften. Wie, dass sich zwei Parallele Linien in der Unendlichkeit schneiden. Was sie in meiner Vorstellung um einen runden Körper krümmt. Als ich allerdings anfing mich in die Mathematik hinter dieser Aussage einzulesen musste ich jedoch schnell feststellen, dass ich keine mich zufriedenstellende Idee bekam. Keine Inspiration, wie dieser mathematische Kontext sich mit einem Algorithmus vermitteln ließe.
 
