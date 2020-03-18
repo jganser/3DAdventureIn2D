@@ -5,6 +5,7 @@ import GameState
 import Data.Maybe
 import Graphics.Proc
 import Constants
+import Colors
 import ObjectUtils
 import qualified Characters.LastLift as LastLift
 
@@ -30,10 +31,15 @@ newPlayer :: P3 -> Player
 newPlayer pos = P Nothing drawPlayer pos False False [] pos
 
 drawPlayer :: P3 -> Draw
-drawPlayer pos = do
-  strokeFill $ blue
+drawPlayer = drawPlayerWithSize playerSize
+
+drawPlayerWithSize :: Float -> P3 -> Draw
+drawPlayerWithSize size pos = do
+  stroke $ azure
+  fill $ blue
   strokeWeight 1
-  ellipse (centerOf $ pos) (playerSize, playerSize)
+  ellipse (centerOf $ pos) (size, size)
+
 
 updatePos :: P3 -> Player -> Player
 updatePos npos player = player { pos = npos }

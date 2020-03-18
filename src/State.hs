@@ -9,7 +9,8 @@ import Drawable
 import Actor hiding (lookupActor,replaceActor)
 import Constants
 import DayTime
-import Player
+import Player hiding (movePlayer)
+import qualified Player (movePlayer)
 import Graphics.Proc
 import qualified Data.Vector as V
 import GameState hiding (replace,lookupActor)
@@ -140,6 +141,11 @@ curTextUpdate st =
             then text 
             else standardText
         }
+
+movePlayer :: P3 -> State -> State
+movePlayer dir st = 
+  let p = Player.movePlayer dir $ player st
+  in st { player = p}
 
 eventStateSum st 
   | isEventSensitive st = GS.eventStateSum $ fromJust $ eventState st

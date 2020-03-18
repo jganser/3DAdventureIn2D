@@ -23,6 +23,7 @@ import Player hiding (startTalking)
 import Characters.LastLift
 import qualified Characters.OldShaman as OldShaman
 import qualified Characters.Boss as Boss
+import Characters.Female (drawFemaleWithSize)
 import qualified Data.Vector as V
 import GameState as GS hiding (eventStateSum)
 
@@ -58,16 +59,28 @@ drawWinningScreen = do
     bgForDayTime Night
     drawPText pText Day
     drawPText pText2 Day
+    drawPlayerInfo
+
+
+drawPlayerInfo :: Draw
+drawPlayerInfo = do
+    let playerText  = PText "Hero    --> " (900,400) 3 black white
+    drawPText playerText Day
+    drawPlayerWithSize 40 (1200,400,0)
+    let belovedText = PText "Beloved --> " (900,500) 3 black white
+    drawPText belovedText Day
+    drawFemaleWithSize 36 (1200,500)
 
 drawStartingScreen :: Pio ()
 drawStartingScreen = do
     let pText = PText "A Flatlanders" (160,300) 6 black white
     let pText2 = PText "Adventure" (200,450) 6 black white
-    let pText3 = PText "Press E To Restart" (150,600) 4 black white
+    let pText3 = PText "Press E To Start" (150,600) 4 black white
     bgForDayTime Night
     drawPText pText Day
     drawPText pText2 Day
     drawPText pText3 Day
+    drawPlayerInfo
 
 drawGameLost ::  Pio ()
 drawGameLost = do
@@ -76,6 +89,7 @@ drawGameLost = do
     bgForDayTime Night
     drawPText pText Day
     drawPText pText2 Day
+    drawPlayerInfo
 
 drawRunning :: State -> Pio ()
 drawRunning st = do            
@@ -145,7 +159,7 @@ updateActorMovement deltaT st = do
             let curActorPos = aPos (GS.lookupActor n (eventActors st))
             let actors = tick deltaT $ eventActors st
             let dir = aPos (GS.lookupActor n actors) - curActorPos
-            return $ st { eventActors = actors, player = movePlayer dir p}
+            return $ st { eventActors = actors, player = Player.movePlayer dir p}
 
 updateFalling :: TimeInterval -> State -> Pio State
 updateFalling deltaT st = 
@@ -154,14 +168,14 @@ updateFalling deltaT st =
     else 
         let p = player st
             dir@(dx,dy,dz) = norm3 $ target p - pos p
-            v = 300 * deltaT
+            v = 200 * deltaT
             dist = dir * (v,v,v/10)
             newPos = pos p + roundXY dist
             newDir@(ndx,ndy,ndz) = norm3 $ target p - newPos
             beyondGoal = (dx * ndx + dy * ndy + dz * ndz) <= 0
             newP = if beyondGoal 
                    then p { isFalling = False, pos = target p} 
-                   else movePlayer dist p
+                   else Player.movePlayer dist p
         in  return $ st {player = newP }
 
 bgForDayTime :: DayTime -> Pio ()

@@ -53,7 +53,7 @@ shamansText :: [String]
 shamansText = [
     "Shaman    : My sincerest apologies..."
   , "Shaman    : Your beloved was chosen to satisfy the monster."
-  , "Shaman    : If there is anyway I can help you with..."
+  , "Shaman    : If there is any way that I can help you with..."
   ]
 
 -- Text ones the hero has talked to the elder
@@ -61,10 +61,10 @@ shamansText2 = [
     "Hero      : I want to follow the steps of the old shaman."
   , "Shaman    : Ofcourse you do... I don\'t want to crush your hopes but..."
   , "Shaman    : I wasn\'t able to find the path of the old shaman."
-  , "Shaman    : I never found out how to vanish in the stonehenge."
+  , "Shaman    : I never found out how to vanish inside of the stonehenge."
   , "Shaman    : Or how to travel the otherworlds with my physical body."
   , "Shaman    : But good luck to you."
-  , "Shaman    : Maybe you will find the grace of the totems."
+  , "Shaman    : Maybe you will find the hidden way."
   , "Shaman    : Who knows, it may be your fate to learn the art of vanishing!"
   , "Shaman    : To walk the otherworld!"
   , "Shaman    : I really hope it is. For you and for her..."

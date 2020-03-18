@@ -130,7 +130,7 @@ setOld1 =
     (sendOldShamanToPlatform . deactivateMainPlatform)
 setOld2 = 
   setPhaseDone (\es -> es { oldShamanOnPlatform = True}) 
-    reactivateMainPlatform
+    reactivateMainPlatform . State.movePlayer (-5,-5,0)
 setOld3 = 
   setPhaseDone (\es -> es { oldShamanOnPlatformAtTop = True}) 
   sendOldShamanToEdge
