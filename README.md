@@ -151,11 +151,13 @@ Für die Projektverwaltung habe ich mir mit [Haskell Tool Stack](https://docs.ha
 ## Playthrough - Taking that straight line
 
 Das Video liegt unter [video/game_loss.mp4](video/game_loss.mp4).
+Und kann auf Youtube unter [hier(https://youtu.be/ilRwnTGOHqg)](https://youtu.be/ilRwnTGOHqg) angeschaut werden.
 
 <video src="video/game_loss.mp4"></video>
 
 ## Playthrough - Non Straight Line
 
 Das Video liegt unter [video/playthrough.mp4](video/playthrough.mp4).
+Und kann auf Youtube unter [hier(https://youtu.be/E6wh-FTxBtg)](https://youtu.be/E6wh-FTxBtg) angeschaut werden.
 
 <video src="video/playthrough.mp4"></video>
