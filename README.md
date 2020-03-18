@@ -22,7 +22,7 @@ An diesem Punkt fand ich meine Inspiration und wusste wie ich meine Umsetzung de
 
 Ich fasste den Plan ein Abenteuer in den Flatlands zu gestalten, bei dem ein offensichtliches Hindernis, es unmöglich macht mit einer Bewegung in gerader Linie das Spiel zu beenden. Stattdessen sollte sich der Spieler auf der dritten Dimension, also einer Höhenachse, bewegen. Und durch einen Umweg ans Ziel kommen.
 
-![screenshot2](screenshots/InGame\ -\ Start.PNG)
+![screenshot2](screenshots/InGame_-_Start.PNG)
 
 Da kein Abenteuer ohne Konflikt auskommt, beschloss ich, dass das Dorf des Protagonisten von einem dreidimensionalen Monster heimgesucht wird.
 
@@ -34,7 +34,7 @@ Diesem Monster wird die geliebte Person des Protagonisten geopfert und Protagoni
 
 Um die dimensionale Problematik weiter zu zuspitzen, habe ich beschlossen, dass der Protagonist nur eine Ebene zur Zeit wahrnehmen kann. Also nichts erkennt was unter oder über ihm liegt. Somit soll auch beim Spieler nicht ein Eindruck einer Draufsicht auf ein dreidimensionales Konstrukt entstehen. Stattdessen kann der Spieler nur wie ein Arzt der auf Schichtbilder schaut, versuchen, dass dreidimensionale Konstrukt in seinem Kopf zu bauen.
 
-![Schnitt](images/Slice_Object.PNG)
+![Schnitt](images/Slice_Object.png)
 
 Wenn nun, aber der Protagonist nicht selbstverständlich durch die dritte Dimension reisen kann, dann braucht er Hilfe. An dieser Stelle beschloss ich, dass er von dreidimensionalen Wesen abhängig sein soll um auf und ab zu reisen.
 
