@@ -34,3 +34,6 @@ Nach dem build kann mit dem Kommando ```stack exec 3DAdventureIn2D-exe``` das Sp
 
 
 
+# Vorhandene Builds
+
+Unter [bin/x86_64-linux](bin/x86_64-linux/) liegt ein Kompilat für Linux des Spiels.
