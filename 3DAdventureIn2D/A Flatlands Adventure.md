@@ -34,6 +34,8 @@ Diesem Monster wird die geliebte Person des Protagonisten geopfert und Protagoni
 
 Um die dimensionale Problematik weiter zu zuspitzen, habe ich beschlossen, dass der Protagonist nur eine Ebene zur Zeit wahrnehmen kann. Also nichts erkennt was unter oder über ihm liegt. Somit soll auch beim Spieler nicht ein Eindruck einer Draufsicht auf ein dreidimensionales Konstrukt entstehen. Stattdessen kann der Spieler nur wie ein Arzt der auf Schichtbilder schaut, versuchen, dass dreidimensionale Konstrukt in seinem Kopf zu bauen.
 
+![Schnitt](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\images\Slice_Object.png)
+
 Wenn nun, aber der Protagonist nicht selbstverständlich durch die dritte Dimension reisen kann, dann braucht er Hilfe. An dieser Stelle beschloss ich, dass er von dreidimensionalen Wesen abhängig sein soll um auf und ab zu reisen.
 
 Da alle Wesen jedoch einfach Geometrien sind und er ja nur einen zweidimensionalen Schnitt durch das Wesen wahrnehmen kann, fand ich eine mystische Komponente in meinem Konzept.
@@ -49,6 +51,8 @@ Ob dies nun so ist, der Gedanke brachte mich nicht nur darauf, dass ich eines Ta
 Ich beschloss, dass mein Abenteuer einen schamanistischen Ritualplatz, eine Art Stonehenge haben sollte. Und von der Mitte dieses Ritualplatzes sollte der Protagonist, das erste mal durch die dritte Dimension reisen.
 
 ### Der Ritualplatz
+
+![henge](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\images\stonehenge-716623_640.jpg)
 
 Die Mystik hat es mir angetan und so bekam ich die Idee, dass wenn eine Sphere regelmäßig durch den Ritualplatz gehen würde. Dann hätten das schon viele gesehen und der Pfad durch die Dimensionen wäre zumindest den Schamanen aufgefallen. Dies wäre allerdings nicht der Fall, wenn das dreidimensionale Wesen ein Zylinder wäre.
 
