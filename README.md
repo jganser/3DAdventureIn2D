@@ -2,7 +2,7 @@
 
 **Algorithmic Thinking - Non Straight Lines**
 
-![screenshot1](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\screenshots\Start.PNG)
+![screenshot1](screenshots\Start.PNG)
 
 Als ich von dem Thema *Non Straight Lines* erfuhr, gingen meine ersten Gedanken um gerade Linien und ihre Eigenschaften. Wie, dass sich zwei Parallele Linien in der Unendlichkeit schneiden. Was sie in meiner Vorstellung um einen runden Körper krümmt. Als ich allerdings anfing mich in die Mathematik hinter dieser Aussage einzulesen musste ich jedoch schnell feststellen, dass ich keine mich zufriedenstellende Idee bekam. Keine Inspiration, wie dieser mathematische Kontext sich mit einem Algorithmus vermitteln ließe.
 
@@ -22,7 +22,7 @@ An diesem Punkt fand ich meine Inspiration und wusste wie ich meine Umsetzung de
 
 Ich fasste den Plan ein Abenteuer in den Flatlands zu gestalten, bei dem ein offensichtliches Hindernis, es unmöglich macht mit einer Bewegung in gerader Linie das Spiel zu beenden. Stattdessen sollte sich der Spieler auf der dritten Dimension, also einer Höhenachse, bewegen. Und durch einen Umweg ans Ziel kommen.
 
-![screenshot2](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\screenshots\InGame - Start.PNG)
+![screenshot2](screenshots\InGame - Start.PNG)
 
 Da kein Abenteuer ohne Konflikt auskommt, beschloss ich, dass das Dorf des Protagonisten von einem dreidimensionalen Monster heimgesucht wird.
 
@@ -34,7 +34,7 @@ Diesem Monster wird die geliebte Person des Protagonisten geopfert und Protagoni
 
 Um die dimensionale Problematik weiter zu zuspitzen, habe ich beschlossen, dass der Protagonist nur eine Ebene zur Zeit wahrnehmen kann. Also nichts erkennt was unter oder über ihm liegt. Somit soll auch beim Spieler nicht ein Eindruck einer Draufsicht auf ein dreidimensionales Konstrukt entstehen. Stattdessen kann der Spieler nur wie ein Arzt der auf Schichtbilder schaut, versuchen, dass dreidimensionale Konstrukt in seinem Kopf zu bauen.
 
-![Schnitt](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\images\Slice_Object.png)
+![Schnitt](images\Slice_Object.png)
 
 Wenn nun, aber der Protagonist nicht selbstverständlich durch die dritte Dimension reisen kann, dann braucht er Hilfe. An dieser Stelle beschloss ich, dass er von dreidimensionalen Wesen abhängig sein soll um auf und ab zu reisen.
 
@@ -52,7 +52,7 @@ Ich beschloss, dass mein Abenteuer einen schamanistischen Ritualplatz, eine Art 
 
 ### Der Ritualplatz
 
-![henge](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\images\stonehenge-716623_640.jpg)
+![henge](images\stonehenge-716623_640.jpg)
 
 Die Mystik hat es mir angetan und so bekam ich die Idee, dass wenn eine Sphere regelmäßig durch den Ritualplatz gehen würde. Dann hätten das schon viele gesehen und der Pfad durch die Dimensionen wäre zumindest den Schamanen aufgefallen. Dies wäre allerdings nicht der Fall, wenn das dreidimensionale Wesen ein Zylinder wäre.
 
@@ -116,7 +116,7 @@ Der Einfachheit halber, habe ich mir dann jedoch, inspiriert von den *Shapes* in
 
 Mit diesem Baukastensystem konnte ich, dann meine Vorstellung deutlich einfacher, kreiieren und anpassen. Als Nebenprodukt ist dabei meine erste kleine Game Engine entstanden.
 
-![Baukasten](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\screenshots\Objects code.PNG)
+![Baukasten](screenshots\Objects code.PNG)
 
 #### Missing Rotation
 
@@ -130,7 +130,7 @@ Nach dem meine Geschichte und der Levelaufbau, dem Spiel einen festen Rahmen ver
 
 Diese Punkte sind, erstens die unwichtigen Dorfbewohner, also diejenigen die keine Plot relevanten Informationen bereithalten und den Spielstand nicht beeinflussen. Und zweitens die Objekte auf den ungenutzten, aber Zeitweilig sichtbaren Höhenebenen.
 
-![townpeople](C:\Users\DigitalHealthLab\git\AlgorithmicThinking\3DAdventureIn2D\screenshots\townpeople.PNG)
+![townpeople](screenshots\townpeople.PNG)
 
 Auch was die allgemeinen Farbgebungen angeht, wäre es möglich gewesen noch mehr Zufall rein zubringen. Doch habe ich an dieser Stelle merken müssen, dass es mir zu viel Zufall wurde und mein Spielerlebnis beim Testen nicht weiter gefördert sonder eher verschlechtert hat.
 
